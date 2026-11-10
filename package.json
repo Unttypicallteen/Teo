@@ -1,0 +1,13 @@
+{
+  "name": "proyecto-teo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Página interactiva de Teo, el robot que mide alturas con trigonometría",
+  "scripts": {
+    "dev": "http-server . -p 5173 -c-1 -o /",
+    "start": "http-server . -p 5173 -c-1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

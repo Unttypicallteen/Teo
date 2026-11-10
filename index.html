@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Proyecto Teo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: marco tipo "índice" (pantalla de Teo a la izquierda, ficha a la derecha) → anatomía → motivación en formato newsletter → simulador tipo consola amable */
+:root{
+  --bg:#F1F5F5; --surface:#FFFFFF; --ink:#0F1718; --muted:#586869; --line:#D6E0E0;
+  --sky:#CFE8EA; --sky-2:#E4F2F3;
+  --orange:#EE7D22; --orange-ink:#AE530B; --on-orange:#1A0E03;
+  --ok:#1E9A56; --bad:#D2413B; --info:#2C7AD0; --laser:#E5302A;
+  --oled:#04080A; --oled-eye:#C9F6FF;
+  --feature:#0F1718; --on-feature:#EEF4F4;
+  --grid:rgba(15,23,24,.06); --glass:rgba(255,255,255,.66); --glass-line:rgba(255,255,255,.85); --tile:#ECEFEE; --paper:#F7F8F6;
+  --serif:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans:"Montserrat", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1314; --surface:#141C1D; --ink:#E8F0F0; --muted:#94A4A5; --line:#25302F;
+  --sky:#16303333; --sky-2:#152526;
+  --orange:#F39441; --orange-ink:#F7A964; --on-orange:#1A0E03;
+  --ok:#3CC47A; --bad:#F06A63; --info:#5BA2F0; --laser:#FF4A42;
+  --feature:#1B2627; --on-feature:#EEF4F4; --grid:rgba(255,255,255,.05); --glass:rgba(20,28,29,.62); --glass-line:rgba(255,255,255,.09); --tile:#1C2627; --paper:#111819; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1314; --surface:#141C1D; --ink:#E8F0F0; --muted:#94A4A5; --line:#25302F;
+  --sky:#16303333; --sky-2:#152526;
+  --orange:#F39441; --orange-ink:#F7A964; --on-orange:#1A0E03;
+  --ok:#3CC47A; --bad:#F06A63; --info:#5BA2F0; --laser:#FF4A42;
+  --feature:#1B2627; --on-feature:#EEF4F4; --grid:rgba(255,255,255,.05); --glass:rgba(20,28,29,.62); --glass-line:rgba(255,255,255,.09); --tile:#1C2627; --paper:#111819; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.scene{display:grid;align-content:center}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 0}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.serif{font-family:var(--serif);font-weight:400}
+.mono{font-family:var(--mono)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:11px 20px;font-weight:600;font-size:14px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);text-decoration:none}
+.btn.orange{background:var(--orange);border-color:var(--orange);color:var(--on-orange)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn[disabled]{opacity:.55;cursor:default}
+
+/* ---------- HERO (marco índice) ---------- */
+.frame{border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.08em}
+.logo i{display:inline-grid;place-items:center;width:28px;height:22px;border-radius:6px;background:var(--oled);gap:3px;grid-auto-flow:column;padding:0 5px}
+.logo i b{width:6px;height:9px;border-radius:2px;background:var(--oled-eye)}
+.nav{display:flex;gap:22px;font-size:13px;font-weight:500;flex-wrap:wrap}
+.nav a{text-decoration:none;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.hero{display:grid;grid-template-columns:1.25fr 1fr}
+.stage{position:relative;background:var(--sky);display:grid;place-items:center;padding:56px 32px;border-right:1px solid var(--line);min-width:0}
+.device{width:min(100%,460px);background:#E9EEEE;border-radius:28px;padding:22px 22px 18px;box-shadow:0 30px 60px -30px rgba(10,30,32,.45), inset 0 -6px 0 rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.08)}
+.device canvas{display:block;width:100%;aspect-ratio:2/1;border-radius:12px;background:var(--oled);cursor:pointer}
+.cheeks{display:flex;justify-content:center;gap:12px;margin-top:16px}
+.cheeks span{width:12px;height:12px;border-radius:50%;background:var(--info);box-shadow:0 0 12px var(--info);transition:background .3s, box-shadow .3s}
+.cheeks.ok span{background:var(--ok);box-shadow:0 0 12px var(--ok)}
+.cheeks.bad span{background:var(--bad);box-shadow:0 0 12px var(--bad)}
+.stage .tap{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:12px;font-weight:600;padding:6px 14px;border-radius:999px;white-space:nowrap}
+.index{padding:40px 36px;display:flex;flex-direction:column;gap:22px;min-width:0}
+.index h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5.4vw,66px);line-height:1}
+.index h1 em{color:var(--orange-ink)}
+.index .lede{color:var(--muted);max-width:44ch}
+.rows{border-top:1px solid var(--line)}
+.rows div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.rows dt{color:var(--muted);margin:0}
+.rows dd{margin:0;font-weight:600;text-align:right}
+.now{display:grid;gap:8px}
+.moods{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.framefoot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 22px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+
+/* ---------- Secciones ---------- */
+section{padding-block:96px 0}
+.head{display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:end;margin-bottom:40px}
+.head h2{font-family:var(--serif);font-weight:400;font-size:clamp(36px,4.6vw,58px);line-height:1.02}
+.head p{color:var(--muted);max-width:56ch}
+
+/* Anatomía */
+.anatomy{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.figure{background:var(--sky-2);border-radius:var(--r);padding:24px;display:grid;place-items:center;min-width:0}
+.figure svg{width:100%;max-width:420px;height:auto}
+.part{transition:opacity .25s}
+.figure.has-active .part{opacity:.28}
+.figure.has-active .part.on{opacity:1}
+.part.on .hl{stroke:var(--orange);stroke-width:3}
+.parts{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.parts li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:110px 1fr auto;gap:16px;align-items:baseline;padding:14px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.parts li button:focus-visible{outline:2px solid var(--orange)}
+.parts .who{font-family:var(--serif);font-size:24px;line-height:1}
+.parts .what{font-size:13.5px;color:var(--muted)}
+.parts .what b{color:var(--ink);font-weight:600;display:block;font-size:14px}
+.parts .pin{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.parts li.on button{background:linear-gradient(90deg,color-mix(in srgb,var(--orange) 14%,transparent),transparent)}
+.parts li.on .who{color:var(--orange-ink)}
+.steps{margin-top:56px;display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.steps li{list-style:none;padding:20px 18px;border-right:1px solid var(--line);font-size:13px;color:var(--muted);min-width:0}
+.steps li:last-child{border-right:0}
+.steps b{display:block;font-family:var(--mono);font-size:12px;color:var(--orange-ink);margin-bottom:8px}
+.steps strong{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+.steps-title{margin:56px 0 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.steps-title h3{font-family:var(--serif);font-weight:400;font-size:32px}
+.steps-wrap .steps{margin-top:16px}
+
+/* Motivación (newsletter) */
+.news{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}
+.feature{background:var(--feature);color:var(--on-feature);border-radius:var(--r);padding:36px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;position:relative;overflow:hidden;min-height:420px}
+.feature .eyebrow{color:color-mix(in srgb,var(--on-feature) 60%,transparent)}
+.feature h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,3.8vw,48px);line-height:1.04;max-width:16ch}
+.feature p{max-width:46ch;color:color-mix(in srgb,var(--on-feature) 78%,transparent)}
+.feature .crack{position:absolute;right:-20px;top:-10px;width:300px;opacity:.5}
+.stack{display:grid;gap:20px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;display:grid;grid-template-columns:auto 1fr;gap:4px 20px;align-items:center}
+.stat .n{font-family:var(--serif);font-size:56px;line-height:.9;grid-row:span 2;color:var(--orange-ink);font-variant-numeric:tabular-nums}
+.stat .t{font-weight:700;font-size:15px}
+.stat .s{font-size:12.5px;color:var(--muted)}
+.src{font-size:11.5px;color:var(--muted);margin-top:12px}
+
+.whys{margin-top:72px;display:grid;grid-template-columns:1fr 1.6fr;gap:40px}
+.whys h3{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.05}
+.whys .intro p{color:var(--muted);margin-top:12px}
+.ladder{display:grid;gap:10px}
+.rung{all:unset;box-sizing:border-box;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;transition:transform .25s,border-color .25s}
+.rung:hover{border-color:var(--orange)}
+.rung:focus-visible{outline:2px solid var(--orange)}
+.rung .k{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:3px}
+.rung .q{font-weight:600}
+.rung .a{display:none;margin-top:8px;font-size:13.5px;color:var(--ink);padding-left:12px;border-left:3px solid var(--ok)}
+.rung .a::before{content:"Teo: ";font-weight:700;color:var(--ok)}
+.rung[aria-expanded="true"] .a{display:block}
+.rung .hint{font-size:11.5px;color:var(--muted)}
+.rung[aria-expanded="true"] .hint{display:none}
+.ladder .rung:nth-child(2){margin-left:4%}.ladder .rung:nth-child(3){margin-left:8%}.ladder .rung:nth-child(4){margin-left:12%}.ladder .rung:nth-child(5){margin-left:16%}
+.root{margin-top:72px;padding:56px 40px;border-radius:var(--r);background:var(--sky);text-align:left;display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center}
+.root canvas{width:180px;aspect-ratio:2/1;border-radius:12px;display:block;background:var(--oled)}
+.root blockquote{margin:0;font-family:var(--serif);font-size:clamp(28px,3.4vw,44px);line-height:1.1}
+.root blockquote em{color:var(--orange-ink)}
+.root cite{display:block;margin-top:14px;font-style:normal;font-size:13px;color:var(--muted)}
+.notes{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.note{border-top:2px solid var(--ink);padding-top:16px}
+.note h4{margin:6px 0 6px;font-size:16px}
+.note p{font-size:13.5px;color:var(--muted)}
+.musts{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px}
+.musts span{border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:13px;font-weight:600;background:var(--surface)}
+
+/* ---------- Simulador ---------- */
+.sim{border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden}
+.simbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs{display:inline-flex;background:var(--bg);border-radius:999px;padding:4px;border:1px solid var(--line)}
+.tabs button{border:0;background:transparent;border-radius:999px;padding:8px 18px;font-weight:600;font-size:13px}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.objs{display:flex;gap:8px;flex-wrap:wrap}
+.simgrid{display:grid;grid-template-columns:1.55fr 1fr}
+.scene{background:var(--sky-2);border-right:1px solid var(--line);min-width:0;position:relative}
+.scene svg{display:block;width:100%;height:auto}
+.panel{padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.talk{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:start}
+.talk canvas{width:96px;aspect-ratio:2/1;border-radius:8px;background:var(--oled);display:block}
+.talk .mini-cheeks{display:flex;gap:6px;justify-content:center;margin-top:6px}
+.talk .mini-cheeks span{width:7px;height:7px;border-radius:50%;background:var(--info);box-shadow:0 0 6px var(--info)}
+.talk .mini-cheeks.ok span{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+.talk .mini-cheeks.bad span{background:var(--bad);box-shadow:0 0 6px var(--bad)}
+.bubble{background:var(--bg);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:10px 14px;font-size:13.5px;min-height:62px}
+.bubble small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tele{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-family:var(--mono)}
+.tele div{padding:10px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tele div:nth-child(2n){border-right:0}
+.tele div:nth-last-child(-n+2){border-bottom:0}
+.tele span{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tele b{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.tele .hot b{color:var(--orange-ink)}
+.ctl label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:4px}
+.ctl label output{font-family:var(--mono);color:var(--muted)}
+.ctl input[type=range]{width:100%;accent-color:var(--orange)}
+.ctl .row{display:flex;gap:8px;align-items:center}
+.ctl .row input{flex:1}
+.nudge{border:1px solid var(--line);background:var(--bg);border-radius:8px;width:34px;height:30px;font-family:var(--mono)}
+.hw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hwb{border:0;border-radius:12px;padding:12px 6px 10px;background:var(--bg);border:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.08em;display:grid;justify-items:center;gap:6px}
+.hwb i{width:22px;height:22px;border-radius:50%;background:var(--ink);box-shadow:inset 0 -3px 0 rgba(0,0,0,.35)}
+.hwb.go i{background:var(--orange)}
+.hwb:disabled{opacity:.4;cursor:default}
+.hwb:not(:disabled):active i{transform:translateY(2px)}
+.proc{border-top:1px solid var(--line);padding-top:14px;font-family:var(--mono);font-size:12.5px;display:grid;gap:6px}
+.proc .l{opacity:0;transform:translateY(4px);transition:opacity .4s,transform .4s}
+.proc .l.on{opacity:1;transform:none}
+.proc .l em{font-style:normal;color:var(--muted)}
+.proc .tot{font-size:15px;font-weight:600;color:var(--orange-ink)}
+.answer{display:flex;gap:8px}
+.answer input{flex:1;min-width:0;font:600 18px var(--mono);padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.small-actions{display:flex;gap:8px;flex-wrap:wrap}
+.small-actions .btn{padding:9px 16px;font-size:13px}
+.formula{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;border-top:1px solid var(--line);flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.formula code{font-family:var(--mono);color:var(--ink);font-size:14px}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+/* EMA + pie */
+.sister{margin-top:96px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;border:1px dashed var(--line);border-radius:var(--r);padding:22px 26px}
+.sister .letters{font-family:var(--mono);font-weight:600;letter-spacing:.3em;font-size:18px;color:var(--muted)}
+.sister .letters b{color:var(--orange-ink)}
+.sister p{font-size:13.5px;color:var(--muted);max-width:70ch}
+.sister p strong{color:var(--ink)}
+.sister .tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:5px 12px;white-space:nowrap}
+footer{margin-top:48px;padding-block:28px 40px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:980px){
+  .hero,.anatomy,.news,.whys,.simgrid,.head{grid-template-columns:1fr}
+  .stage{border-right:0;border-bottom:1px solid var(--line)}
+  .scene{border-right:0;border-bottom:1px solid var(--line)}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .steps li:nth-child(3){border-right:0}
+  .steps li:nth-child(-n+3){border-bottom:1px solid var(--line)}
+  .notes{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .index{padding:28px 20px}
+  .stage{padding:40px 18px 56px}
+  .steps{grid-template-columns:1fr 1fr}
+  .steps li{border-bottom:1px solid var(--line)}
+  .steps li:nth-child(3){border-right:1px solid var(--line)}
+  .steps li:nth-child(2n){border-right:0}
+  .parts li button{grid-template-columns:1fr;gap:4px}
+  .root{grid-template-columns:1fr;padding:32px 22px}
+  .sister{grid-template-columns:1fr}
+  .ladder .rung{margin-left:0!important}
+  .feature{padding:26px;min-height:0}
+  section{padding-block:64px 0}
+  .nav{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- v2: hero con modelo 3D ---------- */
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding-block:6px 18px}
+.top .nav{justify-self:start}
+.top .btn{justify-self:end}
+.btn.small{padding:8px 16px;font-size:13px}
+.hero3{display:grid;grid-template-columns:.9fr 1.1fr;gap:0;border-radius:22px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.hcopy{padding:56px 44px;display:flex;flex-direction:column;gap:26px;justify-content:center;min-width:0}
+.hcopy h1{font-family:var(--serif);font-weight:400;font-size:clamp(48px,6.6vw,92px);line-height:.95;letter-spacing:-.01em}
+.hcopy h1 em{color:var(--orange-ink)}
+.hcopy .lede{color:var(--muted);max-width:46ch;font-size:15.5px}
+.specs{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:0;margin:0;border-top:1px solid var(--line);padding-top:18px}
+.specs div{padding-right:22px;margin-right:22px;border-right:1px solid var(--line)}
+.specs div:last-child{border-right:0}
+.specs dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.specs dd{margin:2px 0 0;font-weight:700;font-size:14px}
+.stage3{position:relative;background:var(--sky);min-height:600px;min-width:0;overflow:hidden}
+.stage3::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:32px 32px;mask-image:radial-gradient(circle at 50% 55%,#000 30%,transparent 75%)}
+.stage3 canvas#hero3d{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.stage3 canvas#hero3d:active{cursor:grabbing}
+.loading{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--muted);pointer-events:none}
+.glass{position:absolute;display:grid;gap:2px;padding:10px 14px;border-radius:14px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--glass-line);box-shadow:0 10px 30px -18px rgba(0,0,0,.4);pointer-events:none}
+.glass span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.glass b{font-size:16px}
+.glass svg{width:80px;height:18px}
+.g1{top:28px;left:28px}.g2{top:120px;right:28px}.g3{bottom:150px;right:40px}
+.g3 b{color:var(--orange-ink)}
+.facecard{position:absolute;left:24px;bottom:24px;display:grid;gap:10px;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--glass-line);border-radius:18px;padding:12px}
+.facecard .device{width:190px;padding:10px 10px 8px;border-radius:14px;box-shadow:none}
+.facecard .cheeks{margin-top:8px;gap:8px}
+.facecard .cheeks span{width:8px;height:8px}
+.facecard .moods .chip{padding:4px 10px;font-size:11.5px;background:var(--surface)}
+.facecard .moods .chip[aria-pressed="true"]{background:var(--ink)}
+.drag{position:absolute;right:20px;bottom:20px;font-size:11.5px;font-weight:600;background:var(--ink);color:var(--bg);padding:5px 12px;border-radius:999px}
+
+/* Piezas (colección) */
+.center-head{text-align:center;display:grid;gap:12px;justify-items:center;margin-bottom:40px}
+.center-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(36px,4.6vw,58px);line-height:1}
+.center-head p{color:var(--muted);max-width:52ch}
+.collection{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.piece{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:12px;text-align:center}
+.piece .ph{aspect-ratio:1;background:var(--tile);border-radius:6px;display:grid;place-items:center;overflow:hidden;transition:background .25s}
+.piece .ph img{width:88%;height:88%;object-fit:contain;transition:transform .4s}
+.piece:hover .ph img,.piece:focus-visible .ph img{transform:scale(1.06) rotate(-3deg)}
+.piece:focus-visible .ph{outline:2px solid var(--orange)}
+.piece b{font-size:15px}
+.piece small{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* Guía */
+.guide{display:grid;grid-template-columns:1.6fr 1fr;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)}
+.gstage{position:relative;background:var(--paper);min-height:520px;border-right:1px solid var(--line);min-width:0}
+.gstage canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.bignum{position:absolute;top:14px;left:22px;font-family:var(--sans);font-weight:800;font-size:84px;line-height:1;color:var(--ink);pointer-events:none;font-variant-numeric:tabular-nums}
+.needs{position:absolute;top:18px;right:18px;max-width:58%;background:var(--surface);border:2px solid var(--ink);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;box-shadow:4px 4px 0 var(--ink)}
+.need{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.need img{width:34px;height:34px;object-fit:contain;background:var(--tile);border-radius:4px}
+.need i{width:14px;height:14px;border-radius:3px;display:inline-block}
+.need em{font-style:normal;font-family:var(--mono);color:var(--muted)}
+.xray{position:absolute;left:18px;bottom:18px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:12px;font-weight:700}
+.xray[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.gside{padding:28px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.gside h3{font-family:var(--serif);font-weight:400;font-size:36px;line-height:1.05}
+.gside p{color:var(--muted)}
+.gside .tip{border-left:3px solid var(--orange);padding-left:12px;font-size:13.5px;color:var(--ink)}
+.gside .tip::before{content:"Consejo: ";font-weight:700}
+.gnav{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:14px}
+.gnav .btn{padding:9px 16px;font-size:13px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:var(--line)}
+.dots button[aria-selected="true"]{background:var(--orange);width:22px;border-radius:5px}
+@media (max-width:980px){
+  .hero3,.guide{grid-template-columns:1fr}
+  .stage3{min-height:520px}
+  .gstage{min-height:420px;border-right:0;border-bottom:1px solid var(--line)}
+  .collection{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:600px){
+  .top{grid-template-columns:auto 1fr}
+  .top .logo{grid-column:1;grid-row:1}
+  .hcopy{padding:34px 22px}
+  .specs{grid-template-columns:repeat(2,auto);gap:12px 0}
+  .specs div:nth-child(2){border-right:0}
+  .g2,.g3{display:none}
+  .facecard .moods{display:none}
+  .facecard .device{width:130px}
+  .bignum{font-size:56px}
+  .needs{max-width:70%;padding:8px}
+}
+
+
+/* ---------- v4: pantalla de mensajes ---------- */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.screen{background:#E6ECEC;border:1px solid rgba(0,0,0,.08);border-radius:18px;padding:12px 12px 9px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.06)}
+.screen canvas{display:block;width:100%;aspect-ratio:2.3/1;border-radius:10px;background:var(--oled)}
+.screen .mini-cheeks{display:flex;gap:8px;justify-content:center;margin-top:9px}
+.screen .mini-cheeks span{width:8px;height:8px;border-radius:50%;background:var(--info);box-shadow:0 0 8px var(--info);transition:background .3s}
+.screen .mini-cheeks.ok span{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.screen .mini-cheeks.bad span{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.tabs{flex-wrap:wrap}
+/* transportador + cuaderno */
+#gauge{border:1px solid var(--line);border-radius:12px;padding:10px 12px 4px;background:var(--surface)}
+.gauge-head,.ficha-head{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.gauge-head em,.ficha-head em{font-style:normal;color:var(--orange-ink);letter-spacing:.04em;text-transform:none;font-weight:600}
+#gaugeSvg{display:block;width:100%;max-width:300px;margin:0 auto}
+#ficha{display:grid;gap:0;border-radius:12px;padding:12px 14px;background:var(--paper);border:1px solid var(--line);
+  background-image:repeating-linear-gradient(var(--paper) 0 41px,var(--grid) 41px 42px)}
+.frow{display:grid;grid-template-columns:1fr 92px auto;gap:8px;align-items:center;padding:6px 0;opacity:.45;transition:opacity .25s}
+.frow.cur,.frow.ok,.frow.bad{opacity:1}
+.frow label{font-family:var(--mono);font-size:13.5px;font-weight:600;display:grid;line-height:1.2}
+.frow label small{font-family:var(--sans);font-weight:500;font-size:11px;color:var(--muted)}
+.frow input{width:100%;font:600 15px var(--mono);padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.frow.ok input{border-color:var(--ok);color:var(--ok)}
+.frow.bad input{border-color:var(--bad)}
+.fok{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700}
+.fok:disabled{opacity:.3;cursor:default}
+.frow.ok .fok{background:var(--ok);border-color:var(--ok);opacity:1}
+
+/* ---------- barra lateral (las mejillas de Teo) ---------- */
+.rail{position:fixed;left:max(14px,env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:6px;padding:12px 8px;border-radius:999px;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line)}
+.rail a{position:relative;display:grid;place-items:center;width:26px;height:26px;text-decoration:none;border-radius:50%}
+.rail a i{width:9px;height:9px;border-radius:50%;background:var(--line);transition:all .25s}
+.rail a:hover i{background:var(--muted)}
+.rail a.on i{background:var(--orange);box-shadow:0 0 10px var(--orange);width:11px;height:11px}
+.rail a span{position:absolute;left:36px;white-space:nowrap;font-size:12px;font-weight:700;background:var(--ink);color:var(--bg);padding:4px 10px;border-radius:999px;opacity:0;transform:translateX(-4px);pointer-events:none;transition:all .2s}
+.rail a:hover span,.rail a:focus-visible span{opacity:1;transform:none}
+.rail .ema-dot.on i{background:#3BA55C;box-shadow:0 0 10px #3BA55C}
+@media (max-width:1320px){
+  .rail{left:50%;top:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);flex-direction:row;padding:6px 10px;gap:2px}
+  .rail a span{left:50%;bottom:34px;transform:translateX(-50%)}
+  .rail a:hover span{transform:translateX(-50%)}
+  .rail a.on span{opacity:1;transform:translateX(-50%)}
+  footer{padding-bottom:90px}
+}
+
+/* ---------- EMA ---------- */
+.ema{--leaf:#2F8A55;--leaf-ink:#24734A;--soil:#8A5A36;margin-top:0}
+.emacard{display:grid;grid-template-columns:1.1fr 1fr;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface)}
+.emacopy{padding:34px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.emacopy h3{font-family:var(--serif);font-weight:400;font-size:clamp(32px,3.6vw,46px);line-height:1}
+.emacopy h3 em{color:var(--leaf-ink)}
+.emacopy p{color:var(--muted);max-width:52ch;font-size:14px}
+.emastats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);padding-top:14px;gap:12px}
+.emastats b{display:block;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1;color:var(--leaf-ink);font-variant-numeric:tabular-nums}
+.emastats span{font-size:12px;color:var(--muted)}
+.emasrc{font-size:11px;color:var(--muted)}
+.emaplay{background:color-mix(in srgb,var(--leaf) 12%,var(--surface));padding:28px;display:grid;gap:14px;align-content:start;min-width:0;border-left:1px solid var(--line)}
+.emadev{background:#E9ECE6;border-radius:18px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid rgba(0,0,0,.08)}
+.emadev canvas{width:100%;aspect-ratio:2/1;border-radius:10px;background:var(--oled);display:block}
+.sema{display:grid;gap:7px;background:#20282A;padding:9px 8px;border-radius:12px}
+.sema i{width:18px;height:18px;border-radius:50%;background:#3a4446;transition:all .3s}
+.sema i.r.on{background:#E5463F;box-shadow:0 0 12px #E5463F}.sema i.y.on{background:#F2C230;box-shadow:0 0 12px #F2C230}.sema i.g.on{background:#3BC46B;box-shadow:0 0 12px #3BC46B}
+.emaread{font-family:var(--mono);font-size:13px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.emaread b{font-size:16px}
+.emaplay .ctl input{accent-color:var(--leaf)}
+.emaplay .chip[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff}
+@media (max-width:980px){.emacard{grid-template-columns:1fr}.emaplay{border-left:0;border-top:1px solid var(--line)}}
+@media (max-width:600px){.emastats{grid-template-columns:1fr}.frow{grid-template-columns:1fr 80px}.frow .fok{grid-column:1/-1;justify-self:end}}
+
+.emamods{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.emamod{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--surface);display:flex;flex-direction:column;gap:10px;min-width:0}
+.emamod h4{margin:0;font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.1}
+.emamod p{margin:0;font-size:13px;color:var(--muted)}
+.emamod p b{color:var(--ink)}
+.emamod dl{margin:auto 0 0;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:4px}
+.emamod dl div{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.emamod dt{color:var(--muted)}.emamod dd{margin:0;font-weight:600;text-align:right}
+.emtag{justify-self:start;align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;color:#fff}
+.emtag.soil{background:#8A5A36}.emtag.water{background:#2C7AD0}.emtag.base{background:#2F8A55}
+.emanote{margin:14px 0 0;font-size:12.5px;color:var(--muted);border-left:3px solid #2F8A55;padding-left:12px;max-width:90ch}
+.emanote b{color:var(--ink)}
+@media (max-width:980px){.emamods{grid-template-columns:1fr}}
+</style>
+
+<nav class="rail" id="rail" aria-label="Ir a una sección">
+  <a href="#inicio"><i></i><span>Inicio</span></a>
+  <a href="#que-es"><i></i><span>Qué es Teo</span></a>
+  <a href="#piezas"><i></i><span>Piezas</span></a>
+  <a href="#arma"><i></i><span>Arma a Teo</span></a>
+  <a href="#por-que"><i></i><span>Por qué</span></a>
+  <a href="#simulador"><i></i><span>Simulador</span></a>
+  <a href="#ema" class="ema-dot"><i></i><span>EMA</span></a>
+</nav>
+<div class="wrap">
+
+<!-- ================= HERO ================= -->
+<header class="top" id="inicio">
+  <nav class="nav" aria-label="Secciones">
+    <a href="#que-es">Qué es</a><a href="#piezas">Piezas</a><a href="#arma">Arma a Teo</a><a href="#por-que">Por qué</a>
+  </nav>
+  <div class="logo"><i><b></b><b></b></i>TEO</div>
+  <a class="btn small" href="#simulador">Probar a Teo</a>
+</header>
+
+<div class="hero3">
+  <div class="hcopy">
+    <span class="eyebrow">Proyecto Teo · la T de STEAM</span>
+    <h1>Mide lo que no puedes <em>alcanzar</em></h1>
+    <p class="lede">Teo es un teodolito armable que cabe en una mochila. Mide la distancia a un objeto real, apunta a su punta y acompaña al estudiante con voz, luces y unos ojitos mientras calcula la altura con trigonometría.</p>
+    <div class="cta">
+      <a class="btn orange" href="#arma">Arma a Teo paso a paso</a>
+      <a class="btn ghost" href="#simulador">Probar el simulador</a>
+    </div>
+    <dl class="specs">
+      <div><dt>Distancia</dt><dd>0,5–3 m</dd></div>
+      <div><dt>Energía</dt><dd>Power bank</dd></div>
+      <div><dt>Internet</dt><dd>No necesita</dd></div>
+      <div><dt>Para</dt><dd>10.° y 11.°</dd></div>
+    </dl>
+  </div>
+
+  <div class="stage3">
+    <canvas id="hero3d" aria-label="Modelo 3D real de Teo. Arrastra para girarlo." role="img"></canvas>
+    <div class="loading" id="heroLoading">Cargando el modelo 3D…</div>
+    <div class="glass g1"><span>Oídos · HC-SR04</span><b class="mono">d = 2,50 m</b><svg viewBox="0 0 80 18" aria-hidden="true"><path d="M2 9 q 6 -8 12 0 t 12 0 t 12 0 t 12 0 t 12 0 t 12 0" fill="none" stroke="var(--orange)" stroke-width="1.6"/></svg></div>
+    <div class="glass g2"><span>Ángulo</span><b class="mono">θ = 38°</b></div>
+    <div class="glass g3"><span>Altura calculada</span><b class="mono">h = 2,25 m</b></div>
+    <div class="facecard">
+      <div class="device"><canvas id="heroFace" aria-label="Cara animada de Teo" role="img"></canvas>
+        <div class="cheeks" id="heroCheeks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></div>
+      <div class="moods" role="group" aria-label="Cambiar la expresión de Teo">
+        <button class="chip" data-mood="neutral" aria-pressed="true">Atento</button>
+        <button class="chip" data-mood="happy" aria-pressed="false">Feliz</button>
+        <button class="chip" data-mood="focus" aria-pressed="false">Midiendo</button>
+        <button class="chip" data-mood="sad" aria-pressed="false">Otra vez</button>
+      </div>
+    </div>
+    <span class="drag">Arrastra para girar</span>
+  </div>
+</div>
+
+
+<!-- ================= QUÉ ES TEO ================= -->
+<section id="que-es">
+  <div class="head">
+    <div><span class="eyebrow">Qué es Teo</span><h2>Un compañero que se arma por partes del cuerpo</h2></div>
+    <p>Cada módulo de Teo es una parte de su cuerpo. Así, quien lo arma entiende qué hace cada pieza sin saber electrónica. Se apila en tres bloques que encajan como fichas de Lego, sin tornillos y sin soldar. Toca una parte para conocerla.</p>
+  </div>
+
+  <div class="anatomy">
+    <div class="figure" id="figure">
+      <svg viewBox="0 0 340 360" role="img" aria-label="Dibujo de Teo con sus partes: energía abajo, caja de electrónica con pantalla en medio y brazo con sensor y láser arriba">
+        <!-- haz del láser -->
+        <g class="part" data-part="dedo">
+          <line x1="292" y1="58" x2="336" y2="34" stroke="var(--laser)" stroke-width="2" stroke-dasharray="4 4"/>
+        </g>
+        <!-- energía -->
+        <g class="part" data-part="energia">
+          <rect class="hl" x="62" y="282" width="216" height="60" rx="12" fill="#D9E2E2" stroke="#9FB0B0" stroke-width="1.5"/>
+          <rect x="248" y="302" width="18" height="10" rx="2" fill="#7C8C8C"/>
+          <text x="80" y="318" font-family="JetBrains Mono, monospace" font-size="11" fill="#55666A">PISO 1 · 5.000 mAh</text>
+        </g>
+        <!-- caja de electrónica -->
+        <g>
+          <rect x="50" y="146" width="240" height="132" rx="16" fill="#F4F7F7" stroke="#9FB0B0" stroke-width="1.5"/>
+        </g>
+        <g class="part" data-part="cara">
+          <rect class="hl" x="70" y="164" width="124" height="68" rx="8" fill="#04080A" stroke="#04080A" stroke-width="1.5"/>
+          <rect x="96" y="181" width="24" height="34" rx="7" fill="#C9F6FF"/>
+          <rect x="144" y="181" width="24" height="34" rx="7" fill="#C9F6FF"/>
+        </g>
+        <g class="part" data-part="mejillas">
+          <rect class="hl" x="74" y="242" width="116" height="16" rx="8" fill="#E3EAEA" stroke="#C4D0D0" stroke-width="1"/>
+          <circle cx="90" cy="250" r="4.5" fill="var(--info)"/><circle cx="111" cy="250" r="4.5" fill="var(--ok)"/><circle cx="132" cy="250" r="4.5" fill="var(--info)"/><circle cx="153" cy="250" r="4.5" fill="var(--ok)"/><circle cx="174" cy="250" r="4.5" fill="var(--bad)"/>
+        </g>
+        <g class="part" data-part="voz">
+          <rect class="hl" x="206" y="166" width="34" height="50" rx="6" fill="#E3EAEA" stroke="#C4D0D0" stroke-width="1"/>
+          <g fill="#7C8C8C"><circle cx="216" cy="178" r="2.4"/><circle cx="230" cy="178" r="2.4"/><circle cx="216" cy="191" r="2.4"/><circle cx="230" cy="191" r="2.4"/><circle cx="216" cy="204" r="2.4"/><circle cx="230" cy="204" r="2.4"/></g>
+        </g>
+        <g class="part" data-part="manos">
+          <rect class="hl" x="250" y="164" width="28" height="80" rx="8" fill="none" stroke="transparent" stroke-width="1"/>
+          <circle cx="264" cy="180" r="8" fill="#EE7D22"/><circle cx="264" cy="204" r="8" fill="#0F1718"/><circle cx="264" cy="228" r="8" fill="#0F1718"/>
+        </g>
+        <g class="part" data-part="cerebro">
+          <rect class="hl" x="204" y="234" width="60" height="26" rx="4" fill="#1F6E8C" stroke="#14526A" stroke-width="1.5"/>
+          <text x="212" y="251" font-family="JetBrains Mono, monospace" font-size="10" fill="#E8F6FA">NANO</text>
+        </g>
+        <!-- base giratoria + cuello -->
+        <g class="part" data-part="cuello">
+          <rect class="hl" x="118" y="126" width="104" height="20" rx="8" fill="#D9E2E2" stroke="#9FB0B0" stroke-width="1.5"/>
+          <rect x="158" y="92" width="24" height="36" rx="4" fill="#2C7AD0" stroke="#1E5A9C" stroke-width="1.5"/>
+          <circle cx="170" cy="96" r="5" fill="#F4F7F7"/>
+        </g>
+        <!-- brazo -->
+        <g transform="rotate(-24 170 96)">
+          <rect x="120" y="84" width="176" height="26" rx="10" fill="#F4F7F7" stroke="#9FB0B0" stroke-width="1.5"/>
+          <g class="part" data-part="oidos">
+            <rect class="hl" x="196" y="80" width="64" height="34" rx="6" fill="#2D6CB5" stroke="#1E4F88" stroke-width="1.5"/>
+            <circle cx="213" cy="97" r="11" fill="#C9D3D8" stroke="#6A7A80"/><circle cx="213" cy="97" r="5" fill="#6A7A80"/>
+            <circle cx="243" cy="97" r="11" fill="#C9D3D8" stroke="#6A7A80"/><circle cx="243" cy="97" r="5" fill="#6A7A80"/>
+          </g>
+          <g class="part" data-part="dedo">
+            <rect class="hl" x="270" y="90" width="28" height="14" rx="4" fill="#3A3F44" stroke="#22262A" stroke-width="1.5"/>
+            <circle cx="298" cy="97" r="3" fill="var(--laser)"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <ul class="parts" id="parts"></ul>
+  </div>
+
+  <div class="steps-wrap">
+    <div class="steps-title"><h3>Un ejercicio con Teo</h3><span class="eyebrow">Seis pasos, un objeto real</span></div>
+    <ol class="steps" style="padding:0;margin:16px 0 0">
+      <li><b>1</b><strong>Saluda</strong>Los ojitos se animan y la voz recuerda: nunca apuntes el láser a los ojos.</li>
+      <li><b>2</b><strong>INICIAR</strong>Apuntas a la base del objeto. Teo mide la distancia d y lo confirma en verde.</li>
+      <li><b>3</b><strong>SELECCIONAR</strong>Subes el brazo hasta que el punto láser toque la punta. Teo fija el ángulo θ.</li>
+      <li><b>4</b><strong>Calculas</strong>La pantalla muestra d y θ. Tú haces la cuenta en el cuaderno.</li>
+      <li><b>5</b><strong>Te responde</strong>Teo te dice si tu altura está bien, con luz y voz.</li>
+      <li><b>6</b><strong>ATRÁS</strong>Empiezas de nuevo con otro objeto. Cada medición es un ejercicio nuevo.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= PIEZAS ================= -->
+<section id="piezas">
+  <div class="center-head">
+    <span class="eyebrow">Diseño 3D · Tinkercad</span>
+    <h2>Las cuatro piezas de Teo</h2>
+    <p>Así quedó el diseño que vamos a imprimir. Toca una pieza para ver en qué paso del armado entra.</p>
+  </div>
+  <div class="collection" id="collection"></div>
+</section>
+
+<!-- ================= ARMADO ================= -->
+<section id="arma">
+  <div class="head">
+    <div><span class="eyebrow">Guía de armado</span><h2>Arma a Teo como un set de Lego</h2></div>
+    <p>Nueve pasos, sin soldar y sin tornillos. Cada paso agrega una parte del cuerpo de Teo. Puedes girar el modelo con el mouse o el dedo y activar la vista de rayos X para ver lo que va por dentro.</p>
+  </div>
+  <div class="guide">
+    <div class="gstage">
+      <canvas id="guide3d" aria-label="Vista 3D del paso actual del armado" role="img"></canvas>
+      <div class="loading" id="guideLoading">Cargando piezas…</div>
+      <div class="bignum" id="gNum" aria-hidden="true">1</div>
+      <div class="needs" id="gNeeds" aria-label="Piezas de este paso"></div>
+      <button class="xray" id="gXray" aria-pressed="false">Rayos X</button>
+    </div>
+    <div class="gside">
+      <span class="eyebrow" id="gPart">Parte del cuerpo</span>
+      <h3 id="gTitle">Paso</h3>
+      <p id="gText"></p>
+      <p class="tip" id="gTip"></p>
+      <div class="gnav">
+        <button class="btn ghost" id="gPrev">Anterior</button>
+        <div class="dots" id="gDots" role="tablist" aria-label="Pasos"></div>
+        <button class="btn orange" id="gNext">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= POR QUÉ ================= -->
+<section id="por-que">
+  <div class="head">
+    <div><span class="eyebrow">Por qué lo hicimos</span><h2>La clase sigue, pero nadie corrige</h2></div>
+    <p>El terremoto del 10 de agosto de 2026 sacó a miles de estudiantes del Chocó de sus salones. Las clases siguen en espacios comunitarios, sin docente permanente, sin electricidad estable y sin internet.</p>
+  </div>
+
+  <div class="news">
+    <article class="feature">
+      <span class="eyebrow">Chocó · agosto de 2026</span>
+      <div style="display:grid;gap:18px">
+        <h3>Cuando el colegio se cae, la clase se muda al salón comunal</h3>
+        <p>La virtualidad no es una opción real: la conectividad es muy baja y la luz va y viene. En trigonometría un solo error de paso, como confundir seno con tangente, arruina todo el ejercicio. Si nadie lo corrige, el estudiante lo repite hasta que termina rechazando la materia.</p>
+      </div>
+    </article>
+    <div class="stack">
+      <div class="stat"><span class="n">811</span><span class="t">colegios colapsados</span><span class="s">Reporte de afectación, UNGRD (2026)</span></div>
+      <div class="stat"><span class="n">400k+</span><span class="t">estudiantes afectados</span><span class="s">Más de 400.000, según la UNGRD (2026)</span></div>
+      <div class="stat"><span class="n">33/33</span><span class="t">el Chocó, último en Saber 11</span><span class="s">209,2 puntos de promedio · ICFES (2024)</span></div>
+    </div>
+  </div>
+
+  <div class="whys">
+    <div class="intro">
+      <span class="eyebrow">Los 5 porqués</span>
+      <h3>Preguntamos cinco veces por qué</h3>
+      <p>Para no quedarnos con la primera respuesta, bajamos un nivel en cada porqué. Cada escalón tiene una respuesta concreta en el diseño de Teo. Toca cada uno.</p>
+    </div>
+    <div class="ladder" id="ladder"></div>
+  </div>
+
+  <div class="root">
+    <canvas id="rootFace" aria-hidden="true"></canvas>
+    <div>
+      <blockquote>El problema no es la falta de salón. Es que nadie les dice, <em>en el momento</em>, si van bien.</blockquote>
+      <cite>Causa raíz · por eso Teo confirma cada paso con voz, luces y ojitos</cite>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><span class="eyebrow">Lo que ya existe</span><h4>Manipulativos matemáticos</h4><p>Regletas, bloques y geoplanos funcionan muy bien, pero se quedan en primaria.</p></div>
+    <div class="note"><span class="eyebrow">Lo que ya existe</span><h4>Kits de robótica</h4><p>Enseñan a programar, pero son de propósito general. Ninguno ataca la trigonometría de 10.° y 11.°</p></div>
+    <div class="note"><span class="eyebrow">Lo que ya existe</span><h4>Apps y clinómetros</h4><p>Miden ángulos, pero piden un celular por estudiante y no dicen si el cálculo está bien.</p></div>
+  </div>
+  <div class="musts" aria-label="Condiciones que Teo cumple siempre">
+    <span>Cabe en una mochila</span><span>Sin red eléctrica</span><span>Sin internet</span><span>Se arma sin soldar desde 9.°</span><span>Llega con Escuelas STEM+</span>
+  </div>
+</section>
+
+<!-- ================= SIMULADOR ================= -->
+<section id="simulador">
+  <div class="head">
+    <div><span class="eyebrow">Simulador</span><h2>Prueba a Teo antes de tenerlo en la mano</h2></div>
+    <p><strong>Teo explica</strong>: ves cómo sale la altura paso a paso. <strong>Hazlo tú</strong>: como en el campo, inclinas a Teo, lees la aguja del transportador y llenas tu cuaderno; Teo revisa cada línea. <strong>Teo te reta</strong>: él mide y tú calculas.</p>
+  </div>
+
+  <div class="sim">
+    <div class="simbar">
+      <div class="tabs" role="tablist" aria-label="Modo del simulador">
+        <button role="tab" id="tabExp" aria-selected="true">Teo explica</button>
+        <button role="tab" id="tabCam" aria-selected="false">Hazlo tú</button>
+        <button role="tab" id="tabRet" aria-selected="false">Teo te reta</button>
+      </div>
+      <div class="objs" id="objs" role="group" aria-label="Objeto a medir"></div>
+    </div>
+    <div class="simgrid">
+      <div class="scene"><svg id="scene" viewBox="0 0 640 420" role="img" aria-label="Escena: Teo frente a un objeto, con el láser apuntando a su punta"></svg></div>
+      <div class="panel">
+        <div class="screen">
+          <canvas id="simFace" aria-hidden="true"></canvas>
+          <div class="mini-cheeks" id="simCheeks"><span></span><span></span><span></span><span></span><span></span></div>
+          <p class="sr" id="say" aria-live="polite">Hola, soy Teo.</p>
+        </div>
+        <div class="tele">
+          <div><span>Distancia d</span><b id="tD">—</b></div>
+          <div><span>Ángulo θ</span><b id="tT">—</b></div>
+          <div><span>Altura del láser</span><b id="tH">0,30 m</b></div>
+          <div class="hot"><span>Altura h</span><b id="tR">?</b></div>
+        </div>
+
+        <div id="expCtl" style="display:grid;gap:14px">
+          <div class="ctl"><label for="dist">Distancia a la base <output id="distOut">2,50 m</output></label><input type="range" id="dist" min="0.5" max="3" step="0.1" value="2.5"></div>
+          <div class="ctl"><label for="ang">Inclinación del brazo <output id="angOut">0°</output></label>
+            <div class="row"><button class="nudge" id="angDn" aria-label="Bajar medio grado">−</button><input type="range" id="ang" min="0" max="75" step="0.5" value="0"><button class="nudge" id="angUp" aria-label="Subir medio grado">+</button></div></div>
+          <div class="hw">
+            <button class="hwb go" id="bStart"><i></i>INICIAR</button>
+            <button class="hwb" id="bSel"><i></i>SELECCIONAR</button>
+            <button class="hwb" id="bBack"><i></i>ATRÁS</button>
+          </div>
+        </div>
+
+        <div id="gauge" hidden>
+          <div class="gauge-head"><span>Transportador del costado</span><em>lee la aguja</em></div>
+          <svg id="gaugeSvg" viewBox="0 0 260 150" role="img" aria-label="Transportador con la aguja que marca la inclinación de Teo"></svg>
+        </div>
+        <div id="ficha" hidden>
+          <div class="ficha-head"><span>Mi cuaderno</span><em id="fObj">Puerta</em></div>
+          <div class="frow" data-i="0"><label for="f0">θ <small>lo leo en la aguja</small></label><input id="f0" inputmode="decimal" autocomplete="off" placeholder="°"><button class="fok" data-i="0">Revisar</button></div>
+          <div class="frow" data-i="1"><label for="f1">tan θ <small>con la calculadora en grados</small></label><input id="f1" inputmode="decimal" autocomplete="off" placeholder="0,000"><button class="fok" data-i="1">Revisar</button></div>
+          <div class="frow" data-i="2"><label for="f2">d × tan θ <small id="fD">2,50 × tan θ</small></label><input id="f2" inputmode="decimal" autocomplete="off" placeholder="m"><button class="fok" data-i="2">Revisar</button></div>
+          <div class="frow" data-i="3"><label for="f3">h = 0,30 + … <small>sumo la altura de Teo</small></label><input id="f3" inputmode="decimal" autocomplete="off" placeholder="m"><button class="fok" data-i="3">Revisar</button></div>
+        </div>
+
+        <div id="retCtl" hidden style="display:grid;gap:12px">
+          <label for="guess" style="font-size:12.5px;font-weight:600">¿Qué altura tiene el objeto? (en metros)</label>
+          <div class="answer"><input id="guess" inputmode="decimal" placeholder="ej. 2,15" autocomplete="off"><button class="btn orange" id="bCheck">Comprobar</button></div>
+          <div class="small-actions"><button class="btn ghost" id="bReveal">Ver la solución</button><button class="btn ghost" id="bNew">Otro ejercicio</button></div>
+        </div>
+
+        <div class="proc" id="proc" hidden></div>
+      </div>
+    </div>
+    <div class="formula">
+      <span>Fórmula de Teo: <code>h = h<sub>Teo</sub> + d · tan(θ)</code></span>
+      <span class="legend"><span><i style="background:var(--orange)"></i>d · cateto adyacente</span><span><i style="background:var(--info)"></i>cateto opuesto</span><span><i style="background:var(--laser)"></i>láser · hipotenusa</span></span>
+    </div>
+  </div>
+
+
+
+
+<!-- ================= EMA ================= -->
+<section id="ema" class="ema">
+  <div class="emacard">
+    <div class="emacopy">
+      <span class="eyebrow">La hermana menor · la E de STEAM</span>
+      <h3>EMA <em>escucha la tierra</em></h3>
+      <p>EMA, Estación de Monitoreo Agrícola, se queda en el colegio. Cada estudiante trae muestras de la finca de su familia y EMA mide pH, conductividad y temperatura. La pantalla muestra un semáforo según el cultivo y el resultado se va a casa en el cuaderno de finca.</p>
+      <div class="emastats">
+        <div><b>67,4 %</b><span>de las sedes educativas del país son rurales</span></div>
+        <div><b>827</b><span>sedes rurales con media agropecuaria</span></div>
+        <div><b>42.305</b><span>estudiantes en media agropecuaria rural</span></div>
+      </div>
+      <span class="emasrc">DANE, censo de educación formal 2024 (formulario C600). EMA está en diseño.</span>
+    </div>
+    <div class="emaplay">
+      <div class="moods" role="group" aria-label="Módulo de EMA">
+        <button class="chip" data-emod="suelo" aria-pressed="true">Módulo de suelo</button>
+        <button class="chip" data-emod="agua" aria-pressed="false">Módulo de agua</button>
+      </div>
+      <div class="emadev">
+        <canvas id="emaFace" aria-hidden="true"></canvas>
+        <div class="sema" aria-hidden="true"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+      </div>
+      <div class="moods" id="emaCrops" role="group" aria-label="Cultivo"></div>
+      <div class="ctl"><label for="emaS"><span id="emaLbl">pH del suelo</span> <output id="emaOut">5,2</output></label><input type="range" id="emaS" min="3.5" max="8.5" step="0.1" value="5.2"></div>
+      <div class="emaread" aria-live="polite"><span id="emaMsg"></span></div>
+      <span class="emasrc">Rangos de referencia aproximados, solo para la demostración.</span>
+    </div>
+  </div>
+  <div class="emamods">
+    <article class="emamod">
+      <span class="emtag soil">Módulo de suelo</span>
+      <h4>pH de la tierra, lote por lote</h4>
+      <p><b>Qué hace:</b> mide pH y temperatura de una muestra preparada con el protocolo de la norma técnica, y la compara con el rango del cultivo.</p>
+      <p><b>Por qué:</b> en Cauca y Nariño se cultiva café, papa y cacao con lluvias que lavan el suelo y lo vuelven ácido. Cerca del 80 % de los suelos del país son ácidos. Seguir el pH en el tiempo es lo que más le sirve al agricultor.</p>
+      <dl><div><dt>Cauca</dt><dd>2.638 estudiantes de 11.° agropecuario</dd></div><div><dt>Nariño</dt><dd>1.473 estudiantes de 11.° agropecuario</dd></div></dl>
+    </article>
+    <article class="emamod">
+      <span class="emtag water">Módulo de agua de riego</span>
+      <h4>¿Esta agua le sirve al cultivo?</h4>
+      <p><b>Qué hace:</b> mide conductividad (cuántas sales trae), pH y temperatura del agua del tanque, el pozo o la garrafa, y cuánta agua queda.</p>
+      <p><b>Por qué:</b> Meta, Magdalena, Bolívar y Sucre son donde más se riega en Colombia. Ahí el agua salada o con mal pH daña el cultivo sin que se note a simple vista.</p>
+      <dl><div><dt>Bolívar</dt><dd>69 % de fincas con riego</dd></div><div><dt>Magdalena</dt><dd>63,8 % de fincas con riego</dd></div></dl>
+    </article>
+    <article class="emamod">
+      <span class="emtag base">Base de EMA</span>
+      <h4>Se queda en el colegio y recuerda</h4>
+      <p><b>Qué hace:</b> la pantalla da un semáforo según el cultivo y guarda cada dato con fecha y lote, sin internet. El estudiante se lleva el resultado en su cuaderno de finca.</p>
+      <p><b>Por qué:</b> semestre a semestre el colegio arma el mapa del suelo y el agua de su vereda. Y como es modular, un colegio que solo necesita agua no compra lo de suelo.</p>
+      <dl><div><dt>Piloto</dt><dd>374 sedes y 9.119 estudiantes de 11.° en 6 regiones</dd></div></dl>
+    </article>
+  </div>
+  <p class="emanote"><b>Lo que EMA no hace:</b> no reemplaza un laboratorio. No mide bacterias, metales ni nutrientes (NPK). Sirve de alerta y seguimiento, y para saber cuándo vale la pena mandar una muestra a analizar.</p>
+</section>
+
+<footer>
+  <span>Juanita Castrillón Benavidez · Daniel José Morales Ramírez · Valeria Arce Montañez · Santiago Jorigua Ortiz</span>
+  <span>Asesor: Nicolás Castiblanco · Universidad del Rosario</span>
+</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(()=>{
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ===================== Cara OLED ===================== */
+class Face{
+  constructor(cv,{follow=false,idle=true,eye='#C9F6FF',glow='rgba(150,235,255,.85)',label='TEO >'}={}){
+    this.label=label;this.eye=eye;this.glow=glow;this.msg='';this.msgT=0;
+    this.cv=cv;this.ctx=cv.getContext('2d');this.mood='neutral';
+    this.look={x:0,y:0};this.cur={x:0,y:0};this.follow=follow;this.idle=idle;
+    this.blinkT=-1;this.nextBlink=performance.now()+1500+Math.random()*2000;this.nextWander=0;
+    const ro=new ResizeObserver(()=>this.size());ro.observe(cv);this.size();
+    requestAnimationFrame(t=>this.loop(t));
+  }
+  size(){const d=devicePixelRatio||1,w=this.cv.clientWidth||200,h=this.cv.clientHeight||100;this.cv.width=Math.round(w*d);this.cv.height=Math.round(h*d);this.W=w;this.H=h;this.ctx.setTransform(d,0,0,d,0,0)}
+  blink(){this.blinkT=performance.now()}
+  say(m){this.msg=m||'';this.msgT=performance.now()}
+  loop(t){
+    if(t>this.nextBlink){this.blink();this.nextBlink=t+2200+Math.random()*3200}
+    if(this.idle&&!this.follow&&!RM&&t>this.nextWander){this.look={x:(Math.random()*2-1)*.7,y:(Math.random()*2-1)*.5};this.nextWander=t+1800+Math.random()*2200}
+    this.cur.x+=(this.look.x-this.cur.x)*.12;this.cur.y+=(this.look.y-this.cur.y)*.12;
+    this.draw(t);requestAnimationFrame(tt=>this.loop(tt));
+  }
+  rr(x,y,w,h,r){const c=this.ctx;r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+  text(t,x0){
+    const c=this.ctx,W=this.W,H=this.H,fs=Math.max(11,Math.min(16,H*.1)),lh=fs*1.35,pad=fs*.9,maxW=W-x0-pad;
+    c.save();c.fillStyle='rgba(201,246,255,.18)';c.fillRect(x0-2,pad*.8,1,H-pad*1.6);
+    c.font=`600 ${fs*.72}px "JetBrains Mono", ui-monospace, monospace`;c.fillStyle=this.eye;c.globalAlpha=.55;c.fillText(this.label,x0+pad*.6,pad*.8+fs*.7);c.globalAlpha=1;
+    c.font=`500 ${fs}px "JetBrains Mono", ui-monospace, monospace`;
+    const n=RM?this.msg.length:Math.floor((t-this.msgT)/18),shown=this.msg.slice(0,n);
+    const words=shown.split(' '),lines=[];let cur='';
+    for(const w of words){const tr=cur?cur+' '+w:w;if(c.measureText(tr).width>maxW&&cur){lines.push(cur);cur=w}else cur=tr}lines.push(cur);
+    const maxL=Math.max(1,Math.floor((H-pad*2-fs)/lh));const vis=lines.slice(-maxL);
+    c.shadowColor=this.glow;c.shadowBlur=6;
+    vis.forEach((l,i)=>c.fillText(l,x0+pad*.6,pad*.8+fs*1.9+i*lh));
+    if(n>=this.msg.length&&Math.floor(t/450)%2){const l=vis[vis.length-1]||'';c.fillRect(x0+pad*.6+c.measureText(l).width+3,pad*.8+fs*1.9+(vis.length-1)*lh-fs*.8,fs*.55,fs)}
+    c.restore();
+  }
+  draw(t){
+    const c=this.ctx,W=this.W,H=this.H;
+    c.fillStyle='#04080A';c.fillRect(0,0,W,H);
+    const M=!!this.msg,Wf=M?W*.3:W;
+    let ew=Wf*(M?.27:.2),eh=H*(M?.36:.52);
+    if(this.mood==='focus')eh*=.5;
+    let b=1;if(this.blinkT>0){const p=(t-this.blinkT)/170;if(p<1)b=1-Math.sin(Math.PI*p)*.9;else this.blinkT=-1}
+    const h=eh*b,gap=Wf*(M?.14:.12),cx=Wf/2+this.cur.x*Wf*.09,cy=H/2+this.cur.y*H*.12;
+    if(M)this.text(t,Wf);
+    const eyes=[[cx-gap/2-ew,cy-h/2],[cx+gap/2,cy-h/2]];
+    c.save();c.shadowColor=this.glow;c.shadowBlur=Wf*.05;c.fillStyle=this.eye;
+    eyes.forEach(([x,y])=>{this.rr(x,y,ew,h,Math.min(ew,eh)*.3);c.fill()});
+    c.restore();
+    c.fillStyle='#04080A';
+    if(this.mood==='happy'){eyes.forEach(([x,y])=>{c.beginPath();c.ellipse(x+ew/2,y+h+eh*.18,ew*.8,eh*.55,0,0,Math.PI*2);c.fill()})}
+    if(this.mood==='sad'){
+      const [l,r]=eyes;
+      c.beginPath();c.moveTo(l[0]-3,l[1]-3);c.lineTo(l[0]+ew+3,l[1]-3);c.lineTo(l[0]-3,l[1]+h*.5);c.fill();
+      c.beginPath();c.moveTo(r[0]-3,r[1]-3);c.lineTo(r[0]+ew+3,r[1]-3);c.lineTo(r[0]+ew+3,r[1]+h*.5);c.fill();
+    }
+    if(this.mood==='focus'){c.fillStyle=this.eye;c.fillRect(eyes[0][0],cy+eh*.55,ew,2);c.fillRect(eyes[1][0],cy+eh*.55,ew,2)}
+  }
+}
+
+/* ===================== Hero ===================== */
+const hero=new Face(document.getElementById('heroFace'),{follow:true});
+const heroCheeks=document.getElementById('heroCheeks');
+addEventListener('pointermove',e=>{
+  if(RM)return;const r=hero.cv.getBoundingClientRect();
+  const x=(e.clientX-(r.left+r.width/2))/(innerWidth/2),y=(e.clientY-(r.top+r.height/2))/(innerHeight/2);
+  hero.look={x:Math.max(-1,Math.min(1,x)),y:Math.max(-1,Math.min(1,y))};
+});
+const moodBtns=[...document.querySelectorAll('[data-mood]')];
+function setHeroMood(m){hero.mood=m;moodBtns.forEach(b=>b.setAttribute('aria-pressed',b.dataset.mood===m));heroCheeks.className='cheeks'+(m==='happy'?' ok':m==='sad'?' bad':'')}
+moodBtns.forEach(b=>b.addEventListener('click',()=>setHeroMood(b.dataset.mood)));
+let tapI=0;const tapSeq=['happy','focus','sad','neutral'];
+hero.cv.addEventListener('click',()=>{hero.blink();setHeroMood(tapSeq[tapI++%tapSeq.length])});
+
+new Face(document.getElementById('rootFace')).mood='neutral';
+
+/* ===================== Anatomía ===================== */
+const PARTS=[
+ ['cerebro','Cerebro','Arduino Nano','Lee el sensor, mueve el servo y decide qué decir. Funciona a 5 V.','5V · GND'],
+ ['cara','Cara','Pantalla OLED 0,96"','Los ojitos reaccionan a cada paso: atentos, felices o «inténtalo otra vez».','A4 · A5 · I2C'],
+ ['oidos','Oídos','Sensor ultrasónico HC-SR04','Mide la distancia con ecos de ultrasonido, como un murciélago. Teo trabaja entre 0,5 y 3 m.','D7 · D8'],
+ ['cuello','Cuello','Servomotor SG90','Levanta el brazo. Su posición es el ángulo de elevación θ.','D9 · PWM'],
+ ['dedo','Dedo','Láser KY-008','Señala la punta del objeto. Solo apunta, no mide. Nunca a los ojos.','D10'],
+ ['mejillas','Mejillas','Tira LED WS2812B','Azul: estoy esperando. Verde: salió bien. Rojo: intenta otra vez.','D6'],
+ ['voz','Voz','DFPlayer Mini y altavoz','Guía pregrabada que da las instrucciones que daría el profesor.','D11 · D12'],
+ ['manos','Manos','Tres pulsadores','INICIAR, SELECCIONAR y ATRÁS. Todo el menú cabe en tres botones.','D2 · D3 · D4'],
+ ['energia','Energía','Power bank 5.000 mAh','Sin enchufe: el piso de abajo carga con todo Teo.','USB 5 V'],
+];
+const partsEl=document.getElementById('parts'),fig=document.getElementById('figure');
+partsEl.innerHTML=PARTS.map(([id,who,name,desc,pin])=>`<li data-p="${id}"><button type="button"><span class="who">${who}</span><span class="what"><b>${name}</b>${desc}</span><span class="pin">${pin}</span></button></li>`).join('');
+let activePart=null;
+function setPart(id){
+  activePart=(activePart===id)?null:id;
+  fig.classList.toggle('has-active',!!activePart);
+  fig.querySelectorAll('.part').forEach(g=>g.classList.toggle('on',g.dataset.part===activePart));
+  partsEl.querySelectorAll('li').forEach(li=>li.classList.toggle('on',li.dataset.p===activePart));
+}
+partsEl.querySelectorAll('li').forEach(li=>li.querySelector('button').addEventListener('click',()=>setPart(li.dataset.p)));
+fig.querySelectorAll('.part').forEach(g=>{g.style.cursor='pointer';g.addEventListener('click',()=>setPart(g.dataset.part))});
+
+/* ===================== 5 porqués ===================== */
+const WHYS=[
+ ['¿Por qué les va mal en trigonometría sin aula?','Sin salón se pierde el tablero y la demostración.','Se mide un poste o una puerta real, no un dibujo del libro.'],
+ ['¿Por qué eso pesa tanto en trigonometría?','Es una materia que exige practicar muchas veces.','Cada medición es un ejercicio nuevo y el kit se reutiliza.'],
+ ['¿Por qué practicar solos no basta?','Sin corrección, el estudiante cree que va bien.','Luces, voz y ojitos confirman cada paso en el momento.'],
+ ['¿Por qué nadie los corrige?','No hay un docente presente todo el tiempo.','Una guía de voz pregrabada da las instrucciones.'],
+ ['¿Y qué pasa al final?','Llega el rechazo: «esto no sirve para nada».','El resultado es una altura real que se puede comprobar.'],
+];
+const ladder=document.getElementById('ladder');
+ladder.innerHTML=WHYS.map(([q,c,a],i)=>`<button class="rung" aria-expanded="false"><span class="k">¿${i+1}?</span><span><span class="q">${q}</span><br><span style="color:var(--muted);font-size:13.5px">${c}</span><span class="a">${a}</span><span class="hint">Toca para ver la respuesta de Teo</span></span></button>`).join('');
+ladder.querySelectorAll('.rung').forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')!=='true')));
+
+/* ===================== Simulador ===================== */
+const OBJS=[{id:'puerta',name:'Puerta',H:2.10},{id:'poste',name:'Poste de luz',H:3.20},{id:'palma',name:'Palma',H:3.60}];
+const HT=0.30, SC=88, GY=388, OX=150;
+const fmt=(n,dp=2)=>n.toFixed(dp).replace('.',',');
+const rad=d=>d*Math.PI/180;
+const S={mode:'exp',obj:0,d:2.5,th:0,step:0,sonar:-1,anim:0,checked:null};
+const $=id=>document.getElementById(id);
+const svg=$('scene'),say=$('say'),simCheeks=$('simCheeks');
+const simFace=new Face($('simFace'),{idle:true});
+
+$('objs').innerHTML=OBJS.map((o,i)=>`<button class="chip" data-o="${i}" aria-pressed="${i===0}">${o.name} · ${fmt(o.H)} m</button>`).join('');
+$('objs').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(S.mode==='ret')return;S.obj=+b.dataset.o;resetExp()}));
+function markObj(){$('objs').querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',+b.dataset.o===S.obj);b.disabled=S.mode==='ret'})}
+
+function mood(m,ch){simFace.mood=m;simCheeks.className='mini-cheeks'+(ch?' '+ch:'')}
+function talk(t){say.textContent=t;simFace.say(t);simFace.blink()}
+
+function hitH(){return HT+S.d*Math.tan(rad(S.th))}
+
+function drawObject(o){
+  const top=GY-o.H*SC;
+  if(o.id==='puerta'){const w=0.9*SC;return `<rect x="${OX-w}" y="${top}" width="${w}" height="${o.H*SC}" fill="#B9844E" stroke="#7A522C" stroke-width="2"/><rect x="${OX-w+10}" y="${top+12}" width="${w-20}" height="${o.H*SC*0.38}" fill="none" stroke="#7A522C" stroke-width="1.5"/><rect x="${OX-w+10}" y="${top+o.H*SC*0.5}" width="${w-20}" height="${o.H*SC*0.42}" fill="none" stroke="#7A522C" stroke-width="1.5"/><circle cx="${OX-12}" cy="${top+o.H*SC*0.52}" r="3.5" fill="#E8C27A"/><rect x="${OX-w-8}" y="${top-6}" width="${w+16}" height="6" fill="#8D9A9B"/>`}
+  if(o.id==='poste'){return `<rect x="${OX-9}" y="${top}" width="9" height="${o.H*SC}" fill="#8D9A9B"/><path d="M${OX-5} ${top+6} q -40 -6 -52 10" fill="none" stroke="#8D9A9B" stroke-width="5"/><rect x="${OX-64}" y="${top+14}" width="22" height="7" rx="3" fill="#E8C27A"/>`}
+  const tx=OX-8;return `<path d="M${tx} ${GY} C ${tx-6} ${GY-o.H*SC*0.5}, ${tx+4} ${GY-o.H*SC*0.8}, ${tx} ${top+10}" stroke="#8A6A45" stroke-width="10" fill="none" stroke-linecap="round"/>`+
+   [[-70,18],[-55,-6],[-30,26],[40,16],[25,-8],[55,30],[-10,-14]].map(([dx,dy])=>`<path d="M${tx} ${top+8} Q ${tx+dx*0.5} ${top+dy-14} ${tx+dx} ${top+dy}" stroke="#2F8A55" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('')+`<circle cx="${tx}" cy="${top+8}" r="4" fill="#2F8A55"/>`;
+}
+
+function render(){
+  const o=OBJS[S.obj],tx=OX+S.d*SC,py=GY-HT*SC,top=GY-o.H*SC;
+  const t=rad(S.th),cos=Math.cos(t),sin=Math.sin(t);
+  let s='';
+  // cuadrícula y suelo
+  s+=`<rect x="0" y="0" width="640" height="420" fill="var(--sky-2)"/>`;
+  for(let m=0;m<=4;m+=0.5){const y=GY-m*SC;if(y<20)break;s+=`<line x1="0" x2="640" y1="${y}" y2="${y}" stroke="var(--line)" stroke-width="1"/>${m%1===0&&m>0?`<text x="8" y="${y-4}" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--muted)">${m} m</text>`:''}`}
+  s+=`<rect x="0" y="${GY}" width="640" height="${420-GY}" fill="var(--line)"/>`;
+  for(let m=0;m<=3;m+=0.5){const x=OX+m*SC;s+=`<line x1="${x}" x2="${x}" y1="${GY}" y2="${GY+(m%1?5:9)}" stroke="var(--muted)"/>${m%1===0?`<text x="${x}" y="${GY+22}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--muted)">${m}</text>`:''}`}
+  s+=drawObject(o);
+  // punta del objeto
+  s+=`<circle cx="${OX}" cy="${top}" r="4" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+  // ondas de sonar
+  if(S.sonar>=0){const span=tx-OX;for(let k=0;k<3;k++){const p=((S.sonar+k*0.33)%1);const x=tx-span*p;s+=`<path d="M${x+6} ${GY-12-10} q -8 10 0 20" fill="none" stroke="var(--orange)" stroke-width="2" opacity="${1-p}"/>`}}
+  // triángulo (animación de proceso)
+  const hh=hitH(),hy=GY-hh*SC;
+  if(S.anim>=1){s+=`<line x1="${tx}" y1="${py}" x2="${OX}" y2="${py}" stroke="var(--orange)" stroke-width="4" stroke-linecap="round"/><text x="${(tx+OX)/2}" y="${py+18}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="var(--orange-ink)">d = ${fmt(S.d)} m</text>`}
+  if(S.anim>=3){s+=`<line x1="${OX}" y1="${py}" x2="${OX}" y2="${hy}" stroke="var(--info)" stroke-width="4" stroke-linecap="round"/><text x="${OX+8}" y="${(py+hy)/2}" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="var(--info)">d·tan θ = ${fmt(S.d*Math.tan(t))} m</text><rect x="${OX}" y="${py-10}" width="10" height="10" fill="none" stroke="var(--info)" stroke-width="1.5"/>`}
+  if(S.anim>=4){s+=`<line x1="${OX+3}" y1="${GY}" x2="${OX+3}" y2="${py}" stroke="var(--ok)" stroke-width="4"/><text x="${OX+10}" y="${GY-8}" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="var(--ok)">h Teo = ${fmt(HT)} m</text>`}
+  // láser
+  if(S.step>=1||S.mode==='ret'){
+    let ex,ey,dot=false;
+    if(hh<=o.H&&cos>1e-6){ex=OX;ey=hy;dot=true}
+    else{const L=2000;ex=tx-L*cos;ey=py-L*sin}
+    s+=`<line x1="${tx}" y1="${py}" x2="${ex}" y2="${ey}" stroke="var(--laser)" stroke-width="2.2" opacity=".9"/>`;
+    if(dot)s+=`<circle cx="${ex}" cy="${ey}" r="5" fill="var(--laser)"/><circle cx="${ex}" cy="${ey}" r="10" fill="var(--laser)" opacity=".25"/>`;
+  }
+  if(S.anim>=2&&S.th>0){const r=46;s+=`<path d="M${tx-r} ${py} A ${r} ${r} 0 0 1 ${tx-r*cos} ${py-r*sin}" fill="none" stroke="var(--ink)" stroke-width="2"/><text x="${tx-r-34}" y="${py-6}" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="var(--ink)">θ=${fmt(S.th,1)}°</text>`}
+  // Teo
+  const bw=34,bh=HT*SC;
+  s+=`<g><rect x="${tx-4}" y="${GY-bh*0.34}" width="${bw}" height="${bh*0.34}" rx="3" fill="#C9D3D3" stroke="#7C8C8C"/><rect x="${tx-6}" y="${GY-bh*0.95}" width="${bw+4}" height="${bh*0.62}" rx="4" fill="#F4F7F7" stroke="#7C8C8C"/><rect x="${tx}" y="${GY-bh*0.9}" width="16" height="${bh*0.42}" rx="2" fill="#04080A"/><rect x="${tx+3}" y="${GY-bh*0.84}" width="3.5" height="5" rx="1" fill="#C9F6FF"/><rect x="${tx+9.5}" y="${GY-bh*0.84}" width="3.5" height="5" rx="1" fill="#C9F6FF"/></g>`;
+  if(S.mode==='campo'){
+    s=s.replace(/<g><rect x="[^"]*" y="[^"]*" width="34"[\s\S]*?<\/g>$/,'');
+    s+=`<g transform="rotate(${S.th} ${tx} ${py})"><rect x="${tx-30}" y="${py-14}" width="40" height="28" rx="5" fill="#EE7D22" stroke="#B4570C"/><circle cx="${tx-24}" cy="${py-4}" r="4.5" fill="#C9D3D8"/><circle cx="${tx-24}" cy="${py+6}" r="0" fill="none"/><circle cx="${tx-30}" cy="${py}" r="2.5" fill="var(--laser)"/><rect x="${tx-24}" y="${py-22}" width="28" height="8" rx="2" fill="#2B3638"/></g>
+    <line x1="${tx+4}" y1="${py-2}" x2="${tx+4}" y2="${py+16}" stroke="#E5302A" stroke-width="2"/>`;
+  }else{
+  s+=`<g transform="rotate(${S.th} ${tx} ${py})"><rect x="${tx-30}" y="${py-5}" width="36" height="10" rx="3" fill="#2D6CB5"/><circle cx="${tx-30}" cy="${py}" r="2.5" fill="var(--laser)"/></g><circle cx="${tx}" cy="${py}" r="3.5" fill="#2C7AD0"/>`;}
+  // alturas
+  const showH=(S.mode==='exp'&&S.anim>=5)||(S.mode==='campo'&&S.done)||(S.mode==='ret'&&(S.checked==='ok'||S.anim>=5));
+  s+=`<text x="${OX-(o.id==='puerta'?0.45*SC:28)}" y="${top-12}" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">${showH?fmt(o.H)+' m':'h = ?'}</text>`;
+  svg.innerHTML=s;
+
+  // telemetría
+  const measured=S.step>=1||S.mode==='ret';
+  $('tD').textContent=measured?fmt(S.d)+' m':'—';
+  $('tT').textContent=S.mode==='campo'?(S.step>=1?'ver aguja':'—'):(S.step>=2||S.mode==='ret')?fmt(S.th,1)+'°':(S.step===1?fmt(S.th,1)+'°':'—');
+  if(S.mode==='campo'){drawGauge();$('tR').textContent=S.done?$('f3').value.replace('.',',')+' m':'?'}
+  $('tR').textContent=(S.anim>=5)?fmt(hh)+' m':'?';
+  $('distOut').textContent=fmt(S.d)+' m';$('angOut').textContent=S.mode==='campo'?(S.step>=1?'mira la aguja':'—'):fmt(S.th,1)+'°';
+  $('dist').disabled=S.mode==='ret'||S.step!==0;
+  $('ang').disabled=$('angUp').disabled=$('angDn').disabled=S.step!==1;
+  $('bStart').disabled=S.step!==0||S.sonar>=0;
+  $('bSel').disabled=S.step!==1;
+}
+
+/* proceso animado */
+let animTimers=[];
+function stopAnim(){animTimers.forEach(clearTimeout);animTimers=[]}
+function playProcess(){
+  stopAnim();const o=OBJS[S.obj],t=rad(S.th),tan=Math.tan(t),opp=S.d*tan,h=HT+opp;
+  const err=Math.abs(h-o.H)/o.H*100;
+  const lines=[
+   `<span class="l">1 · d = ${fmt(S.d)} m <em>← lo midió el ultrasonido</em></span>`,
+   `<span class="l">2 · θ = ${fmt(S.th,1)}° <em>← posición del servo</em></span>`,
+   `<span class="l">3 · d · tan θ = ${fmt(S.d)} × ${fmt(tan,3)} = ${fmt(opp)} m</span>`,
+   `<span class="l">4 · h = ${fmt(HT)} + ${fmt(opp)} <em>← sumo mi altura</em></span>`,
+   `<span class="l tot">h = ${fmt(h)} m <em style="font-weight:400">· real ${fmt(o.H)} m · error ${fmt(err,1)} %</em></span>`];
+  const p=$('proc');p.hidden=false;p.innerHTML=lines.join('')+`<button class="btn ghost" id="bReplay" style="justify-self:start;margin-top:6px;padding:7px 14px;font-size:12px">Repetir animación</button>`;
+  $('bReplay').onclick=playProcess;
+  const L=p.querySelectorAll('.l');S.anim=0;render();
+  const msgs=['Primero, la distancia horizontal: es el cateto adyacente.','Luego, el ángulo del láser respecto al suelo.','La tangente une los dos: opuesto = adyacente × tan θ.','No olvides mi altura: el láser sale a 0,30 m del suelo.',`¡Listo! La altura es ${fmt(h)} m.`];
+  const gapT=RM?50:1200;
+  for(let i=0;i<5;i++)animTimers.push(setTimeout(()=>{S.anim=i+1;L[i].classList.add('on');talk(msgs[i]);if(i===4)mood('happy','ok');else mood('focus','');render()},gapT*(i+0.3)));
+}
+
+/* --- modo explica --- */
+function resetExp(){stopAnim();S.done=false;closeFicha();$('ang').previousElementSibling;document.querySelector('label[for=ang]').firstChild.textContent=S.mode==='campo'?'Inclinación de Teo ':'Inclinación del brazo ';S.step=0;S.th=0;S.anim=0;S.sonar=-1;$('ang').value=0;$('proc').hidden=true;mood('neutral','');talk('Ponme frente a la base del objeto, elige la distancia y pulsa INICIAR.');markObj();render()}
+$('dist').addEventListener('input',e=>{S.d=+e.target.value;render()});
+function setAng(v){S.th=Math.max(0,Math.min(75,v));$('ang').value=S.th;
+  const e=hitH()-OBJS[S.obj].H;mood('focus','');
+  if(Math.abs(e)/OBJS[S.obj].H<=0.05)talk('¡Ahí está la punta! Pulsa SELECCIONAR.');else talk(e<0?(S.mode==='campo'?'Inclíname un poco más…':'Sube un poco más el brazo…'):'Te pasaste: el láser va por encima de la punta.');
+  render()}
+$('ang').addEventListener('input',e=>setAng(+e.target.value));
+$('angUp').onclick=()=>setAng(S.th+0.5);$('angDn').onclick=()=>setAng(S.th-0.5);
+$('bStart').onclick=()=>{
+  talk('Escuchando el eco…');mood('focus','');
+  const t0=performance.now(),dur=RM?100:1300;S.sonar=0;
+  const tick=now=>{const p=(now-t0)/dur;if(p<1){S.sonar=(p*2.5)%1;render();requestAnimationFrame(tick)}else{S.sonar=-1;S.step=1;mood('happy','ok');talk(`Medí ${fmt(S.d)} m hasta la base. Ahora sube mi brazo hasta que el láser toque la punta.`);render()}};
+  requestAnimationFrame(tick);
+};
+$('bSel').onclick=()=>{
+  const o=OBJS[S.obj],e=hitH()-o.H;
+  if(Math.abs(e)/o.H<=0.05&&S.mode==='campo'){S.step=2;mood('happy','ok');talk('¡Quieto ahí! Ahora lee el ángulo en la aguja del transportador y escríbelo en tu cuaderno.');openFicha();render();return}
+  if(Math.abs(e)/o.H<=0.05){S.step=2;mood('happy','ok');talk(`Fijé θ = ${fmt(S.th,1)}°. Mira cómo sale la altura.`);render();playProcess()}
+  else{mood('sad','bad');talk(`El punto quedó ${fmt(Math.abs(e)*100,0)} cm ${e<0?'por debajo':'por encima'} de la punta. Ajusta el brazo e inténtalo otra vez.`)}
+};
+$('bBack').onclick=resetExp;
+
+/* --- modo reta --- */
+function newChallenge(){
+  stopAnim();$('proc').hidden=true;S.anim=0;S.checked=null;$('guess').value='';
+  S.obj=Math.floor(Math.random()*OBJS.length);
+  const o=OBJS[S.obj];S.d=Math.round((1+Math.random()*2)*10)/10;
+  S.th=Math.round(Math.atan((o.H-HT)/S.d)*180/Math.PI);
+  mood('neutral','');markObj();
+  talk(`Mi turno de preguntar. Medí d = ${fmt(S.d)} m y θ = ${S.th}°. ¿Qué tan alta es la ${o.name.toLowerCase()}? Mi láser está a ${fmt(HT)} m del suelo.`);
+  render();
+}
+function check(){
+  const raw=$('guess').value.trim().replace(',','.');const x=parseFloat(raw);
+  if(!raw||isNaN(x)){talk('Escribe tu resultado en metros, por ejemplo 2,15.');return}
+  const t=rad(S.th),c=HT+S.d*Math.tan(t),near=v=>Math.abs(x-v)/Math.abs(v)<=0.05;
+  if(near(c)){S.checked='ok';mood('happy','ok');talk(`¡Correcto! ${fmt(x)} m está dentro del ±5 %. La altura es ${fmt(c)} m.`);render();return}
+  S.checked='bad';mood('sad','bad');
+  const diag=[
+    [HT+S.d*Math.sin(t),'Usaste seno. Con el cateto adyacente (d) y el opuesto se usa tangente.'],
+    [HT+S.d*Math.cos(t),'Usaste coseno. Con el adyacente (d) y el opuesto se usa tangente.'],
+    [S.d*Math.tan(t),'Casi: olvidaste sumar mi altura. El láser sale a 0,30 m del suelo.'],
+    [HT+S.d*Math.tan(S.th),'Tu calculadora está en radianes. Cámbiala a grados (DEG).'],
+    [HT+S.d/Math.tan(t),'Dividiste d entre tan θ. Es al revés: opuesto = d × tan θ.'],
+  ].find(([v])=>isFinite(v)&&near(v));
+  talk(diag?diag[1]:'Todavía no. Revisa: h = 0,30 + d × tan θ, con la calculadora en grados.');
+  render();
+}
+$('bCheck').onclick=check;$('guess').addEventListener('keydown',e=>{if(e.key==='Enter')check()});
+$('bReveal').onclick=()=>playProcess();$('bNew').onclick=newChallenge;
+
+
+/* --- modo hazlo tú: transportador + cuaderno --- */
+function drawGauge(){
+  const cx=70,cy=14,R=124;let s=`<path d="M${cx} ${cy} L${cx} ${cy+R} A ${R} ${R} 0 0 0 ${cx+R} ${cy} Z" fill="var(--sky-2)" stroke="var(--line)"/>`;
+  // 0° abajo (aguja colgando), crece hacia la derecha; vista del costado
+  for(let a=0;a<=90;a++){const r=rad(a),x1=cx+Math.sin(r)*R,y1=cy+Math.cos(r)*R,L=a%10===0?14:a%5===0?9:5;const x2=cx+Math.sin(r)*(R-L),y2=cy+Math.cos(r)*(R-L);
+    s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--ink)" stroke-width="${a%10===0?1.4:.7}"/>`;
+    if(a%10===0){const xt=cx+Math.sin(r)*(R-26),yt=cy+Math.cos(r)*(R-26)+4;s+=`<text x="${xt}" y="${yt}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)">${a}</text>`}}
+  for(let a=-10;a<0;a++){}
+  const r=rad(S.step>=1?S.th:0),nx=cx+Math.sin(r)*(R-4),ny=cy+Math.cos(r)*(R-4);
+  s+=`<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="var(--laser)" stroke-width="2.4" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="var(--laser)"/><circle cx="${cx}" cy="${cy}" r="2" fill="var(--surface)"/>`;
+  $('gaugeSvg').innerHTML=s;
+}
+let fStage=0;
+function openFicha(){const f=$('ficha');f.hidden=false;f.style.display='grid';fStage=0;$('fObj').textContent=OBJS[S.obj].name;$('fD').textContent=`${fmt(S.d)} × tan θ`;
+  f.querySelectorAll('.frow').forEach((r,i)=>{r.className='frow'+(i===0?' cur':'');const inp=r.querySelector('input');inp.value='';inp.disabled=i!==0;r.querySelector('button').disabled=i!==0});setTimeout(()=>$('f0').focus({preventScroll:true}),50)}
+function closeFicha(){const f=$('ficha');if(!f)return;f.hidden=true;f.style.display='none'}
+const num=id=>{const v=parseFloat($(id).value.trim().replace(',','.'));return isNaN(v)?null:v};
+function fCheck(i){
+  const v=num('f'+i);if(v===null){talk('Escribe un número en esa línea del cuaderno.');return}
+  const th=num('f0'),tn=num('f1'),op=num('f2');let ok=false,msg='';
+  if(i===0){ok=Math.abs(v-S.th)<=1;msg=ok?`Bien leído: ${fmt(v,0)}°. Ahora saca la tangente.`:(Math.abs(v-(90-S.th))<=1?'Leíste el complemento. El 0 está abajo, donde cuelga la aguja sin inclinar.':'Mira otra vez la aguja: las rayitas largas van de 10 en 10 y las medianas de 5 en 5.')}
+  if(i===1){const c=Math.tan(rad(th));ok=Math.abs(v-c)/c<=0.02;
+    msg=ok?'Perfecto. Multiplica la distancia por esa tangente.':Math.abs(v-Math.sin(rad(th)))<0.01?'Ese es el seno. Necesitas la tangente: opuesto sobre adyacente.':Math.abs(v-Math.cos(rad(th)))<0.01?'Ese es el coseno. Usa la tangente.':Math.abs(v-Math.tan(th))<0.02?'Tu calculadora está en radianes. Ponla en grados (DEG).':`Revisa: tan ${fmt(th,0)}° en la calculadora.`}
+  if(i===2){const c=S.d*tn;ok=Math.abs(v-c)/c<=0.03;msg=ok?'Eso es el cateto opuesto. ¿Falta algo para la altura?':Math.abs(v-S.d/tn)/(S.d/tn)<0.03?'Dividiste. Es d por la tangente.':`Multiplica ${fmt(S.d)} × ${fmt(tn,3)}.`}
+  if(i===3){const c=HT+op;ok=Math.abs(v-c)/c<=0.03;msg=ok?'':Math.abs(v-op)<0.02?'¡Casi! Te faltó sumar mi altura: el láser está a 0,30 m del suelo.':`Suma 0,30 + ${fmt(op)}.`}
+  const row=$('ficha').querySelector(`.frow[data-i="${i}"]`);
+  if(!ok){row.classList.add('bad');mood('sad','bad');talk(msg);return}
+  row.classList.remove('bad','cur');row.classList.add('ok');row.querySelector('input').disabled=true;row.querySelector('button').disabled=true;
+  if(i<3){mood('happy','ok');talk(msg);const nx=$('ficha').querySelector(`.frow[data-i="${i+1}"]`);nx.classList.add('cur');nx.querySelector('input').disabled=false;nx.querySelector('button').disabled=false;nx.querySelector('input').focus({preventScroll:true})}
+  else{S.done=true;const H=OBJS[S.obj].H,err=Math.abs(v-H)/H*100;mood('happy','ok');talk(`¡Lo lograste! Tu altura: ${fmt(v)} m. La real es ${fmt(H)} m: error de ${fmt(err,1)} %. ${err<=5?'Dentro del ±5 %.':'Para afinar, apunta mejor el láser.'}`);render()}
+}
+document.querySelectorAll('.fok').forEach(b=>b.onclick=()=>fCheck(+b.dataset.i));
+document.querySelectorAll('.frow input').forEach(inp=>inp.addEventListener('keydown',e=>{if(e.key==='Enter')fCheck(+inp.closest('.frow').dataset.i)}));
+
+/* --- pestañas --- */
+function setMode(m){
+  S.mode=m;$('tabExp').setAttribute('aria-selected',m==='exp');$('tabCam').setAttribute('aria-selected',m==='campo');$('tabRet').setAttribute('aria-selected',m==='ret');
+  const ex=m!=='ret';$('expCtl').hidden=!ex;$('retCtl').hidden=m!=='ret';$('gauge').hidden=m!=='campo';if(m!=='campo')closeFicha();
+  $('expCtl').style.display=ex?'grid':'none';$('retCtl').style.display=m==='ret'?'grid':'none';
+  if(ex){S.d=+$('dist').value;resetExp()}else{S.step=2;newChallenge()}
+}
+$('tabExp').onclick=()=>setMode('exp');$('tabCam').onclick=()=>setMode('campo');$('tabRet').onclick=()=>setMode('ret');
+setMode('exp');
+
+/* ===================== Barra lateral ===================== */
+(()=>{const links=[...document.querySelectorAll('#rail a')];const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.remove('on'));map.get(e.target.id)?.classList.add('on')}})},{rootMargin:'-45% 0px -50% 0px'});
+map.forEach((a,id)=>{const el=document.getElementById(id);if(el)io.observe(el)});links[0].classList.add('on');})();
+
+/* ===================== EMA ===================== */
+(()=>{
+const face=new Face(document.getElementById('emaFace'),{eye:'#B9F5C9',glow:'rgba(120,230,150,.8)',label:'EMA >'});
+const CROPS={suelo:[['Café',5.0,5.5],['Papa',5.0,6.0],['Cacao',6.0,7.0]],agua:[['Riego',0,0.7]]};
+let mod='suelo',crop=0;const $=id=>document.getElementById(id);const sl=$('emaS');
+const f=n=>n.toFixed(1).replace('.',',');
+function crops(){$('emaCrops').innerHTML=CROPS[mod].map((c,i)=>`<button class="chip" data-c="${i}" aria-pressed="${i===crop}">${c[0]}</button>`).join('');
+  $('emaCrops').querySelectorAll('button').forEach(b=>b.onclick=()=>{crop=+b.dataset.c;crops();upd()})}
+function upd(){
+  const v=+sl.value,[name,lo,hi]=CROPS[mod][crop];let lvl,msg;
+  if(mod==='suelo'){$('emaOut').textContent=f(v);const d=v<lo?lo-v:v>hi?v-hi:0;lvl=d===0?'g':d<=0.5?'y':'r';
+    msg=lvl==='g'?`pH ${f(v)}: bien para ${name.toLowerCase()}.`:v<lo?`pH ${f(v)}: suelo ácido para ${name.toLowerCase()}. Pregunta por encalado.`:`pH ${f(v)}: muy alto para ${name.toLowerCase()}.`}
+  else{$('emaOut').textContent=f(v)+' dS/m';lvl=v<0.7?'g':v<=3?'y':'r';
+    msg=lvl==='g'?`CE ${f(v)} dS/m: agua sin restricción para riego.`:lvl==='y'?`CE ${f(v)} dS/m: algo salada. Riega con cuidado.`:`CE ${f(v)} dS/m: muy salada. Manda una muestra al laboratorio.`}
+  document.querySelectorAll('.sema i').forEach(i=>i.classList.toggle('on',i.classList.contains(lvl)));
+  $('emaMsg').textContent=msg;face.say(msg.split(':')[0]);face.mood=lvl==='g'?'happy':lvl==='y'?'focus':'sad';
+}
+document.querySelectorAll('[data-emod]').forEach(b=>b.onclick=()=>{mod=b.dataset.emod;crop=0;document.querySelectorAll('[data-emod]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('emaLbl').textContent=mod==='suelo'?'pH del suelo':'Conductividad del agua';
+  if(mod==='suelo'){sl.min=3.5;sl.max=8.5;sl.step=0.1;sl.value=5.2}else{sl.min=0.1;sl.max=4.5;sl.step=0.1;sl.value=0.5}crops();upd()});
+sl.addEventListener('input',upd);crops();upd();
+})();
+
+})();
+
+/* ===================== Teo en 3D (modelos reales) ===================== */
+(()=>{
+if(!window.THREE){['heroLoading','guideLoading'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='No se pudo cargar el visor 3D.'});return}
+const T=THREE,RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const V=(x,y,z)=>new T.Vector3(x,y,z);
+// marco del diseño (Z hacia arriba, frente en y = -52) → mundo de three (Y hacia arriba)
+const W=(x,y,z)=>V(x,z,-y);
+const FILES={cuerpo:'models/teo_cuerpo.stl.txt',tapa:'models/teo_tapa.stl.txt',visor:'models/teo_visor.stl.txt',aguja:'models/teo_aguja.stl.txt'};
+const b64=s=>{const bin=atob(s.trim());const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer};
+const COL={cuerpo:'#EE7D22',tapa:'#F1E7D6',visor:'#2B3638',aguja:'#E5302A'};
+const loader=new T.STLLoader();
+const geos={};
+const ready=Promise.all(Object.entries(FILES).map(([k,u])=>fetch(u).then(r=>{if(!r.ok)throw new Error(u);return r.text()}).then(s=>{const g=loader.parse(b64(s));g.computeVertexNormals();geos[k]=g})));
+
+function plastic(c,o={}){return new T.MeshStandardMaterial(Object.assign({color:c,roughness:.62,metalness:.02},o))}
+function lights(scene){
+  scene.add(new T.HemisphereLight(0xffffff,0x7a8a8a,.85));
+  const k=new T.DirectionalLight(0xffffff,.75);k.position.set(120,220,160);scene.add(k);
+  const r=new T.DirectionalLight(0xbfe6ff,.35);r.position.set(-160,80,-120);scene.add(r);
+}
+function makeRenderer(cv){const r=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio||1,2));r.outputEncoding=T.sRGBEncoding;return r}
+function fit(r,cam,cv){const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;const c=r.domElement;if(c.width!==Math.round(w*r.getPixelRatio())||c.height!==Math.round(h*r.getPixelRatio())){r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}}
+function visible(el,cb){const io=new IntersectionObserver(es=>es.forEach(e=>cb(e.isIntersecting)));io.observe(el)}
+
+/* piezas en el marco del diseño */
+function teoGroup(){const g=new T.Group();g.rotation.x=-Math.PI/2;return g}
+const AGUJA_Q=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(V(0,1,0),V(0,0,-1),V(-1,0,0)));
+const FINAL={
+  cuerpo:{p:V(0,0,0)},
+  tapa:{p:V(0,22,57.5)},
+  visor:{p:V(0,0,68.2)},
+  aguja:{p:V(-35.2,-17,35),q:AGUJA_Q},
+};
+
+
+/* sello de marca TEO (como el logo en las piezas de Lego) */
+let brandTex=null;
+function drawBrand(cv){const c=cv.getContext('2d'),w=cv.width,h=cv.height;c.clearRect(0,0,w,h);
+  const r=h*.28;c.fillStyle='#0F1718';c.beginPath();c.moveTo(r,0);c.arcTo(w,0,w,h,r);c.arcTo(w,h,0,h,r);c.arcTo(0,h,0,0,r);c.arcTo(0,0,w,0,r);c.fill();
+  c.strokeStyle='#FFFFFF';c.lineWidth=h*.05;c.beginPath();const m=h*.07,r2=r-m;c.moveTo(m+r2,m);c.arcTo(w-m,m,w-m,h-m,r2);c.arcTo(w-m,h-m,m,h-m,r2);c.arcTo(m,h-m,m,m,r2);c.arcTo(m,m,w-m,m,r2);c.stroke();
+  c.fillStyle='#C9F6FF';c.shadowColor='rgba(150,235,255,.9)';c.shadowBlur=h*.08;
+  [[.17,.3],[.29,.3]].forEach(([x,y])=>{const ew=w*.08,eh=h*.4,rr=ew*.35;const X=w*x,Y=h*y;c.beginPath();c.moveTo(X+rr,Y);c.arcTo(X+ew,Y,X+ew,Y+eh,rr);c.arcTo(X+ew,Y+eh,X,Y+eh,rr);c.arcTo(X,Y+eh,X,Y,rr);c.arcTo(X,Y,X+ew,Y,rr);c.fill()});
+  c.shadowBlur=0;c.fillStyle='#FFFFFF';c.font=`800 ${h*.5}px Montserrat, "Segoe UI", sans-serif`;c.textBaseline='middle';c.fillText('TEO',w*.44,h*.53);
+  c.fillStyle='#EE7D22';c.fillRect(w*.445,h*.76,w*.4,h*.05);}
+function brandMesh(){
+  if(!brandTex){const cv=document.createElement('canvas');cv.width=640;cv.height=256;drawBrand(cv);brandTex=new T.CanvasTexture(cv);brandTex.encoding=T.sRGBEncoding;brandTex.anisotropy=4;
+    document.fonts&&document.fonts.load('800 40px Montserrat').then(()=>{drawBrand(cv);brandTex.needsUpdate=true})}
+  const m=new T.Mesh(new T.PlaneGeometry(40,16),new T.MeshBasicMaterial({map:brandTex,transparent:true,polygonOffset:true,polygonOffsetFactor:-2}));
+  m.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(V(0,1,0),V(0,0,1),V(1,0,0)));m.position.set(34.25,-31,44);return m}
+
+/* ---------- HERO ---------- */
+const hcv=document.getElementById('hero3d');
+if(hcv){
+  const r=makeRenderer(hcv),scene=new T.Scene(),cam=new T.PerspectiveCamera(30,1,1,2000);lights(scene);
+  cam.position.copy(W(200,-280,150));cam.lookAt(0,34,0);
+  const pivot=new T.Group();scene.add(pivot);
+  let rotY=-0.5,vel=0.0035,drag=null,tilt=0;
+  hcv.addEventListener('pointerdown',e=>{drag={x:e.clientX,r:rotY};hcv.setPointerCapture(e.pointerId)});
+  hcv.addEventListener('pointermove',e=>{if(drag){rotY=drag.r+(e.clientX-drag.x)*0.01}});
+  hcv.addEventListener('pointerup',()=>drag=null);
+  let on=false;visible(hcv,v=>on=v);
+  ready.then(()=>{
+    document.getElementById('heroLoading').hidden=true;
+    const g=teoGroup();
+    for(const k of ['cuerpo','tapa','visor','aguja']){const m=new T.Mesh(geos[k],plastic(COL[k]));m.position.copy(FINAL[k].p);if(FINAL[k].q)m.quaternion.copy(FINAL[k].q);g.add(m)}
+    g.add(brandMesh());
+    for(const k of ['hc','laser','power','nano','speaker','btns']){const P=PARTS[k],m=P.make();m.position.copy(P.p);g.add(m)}
+    g.position.set(0,0,0);
+    const holder=new T.Group();holder.add(g);holder.position.set(0,0,0);
+    // centrar: el cuerpo va de y=-52 a 52 y z de 0 a 68 (más el visor)
+    g.position.set(0,-10,0);
+    pivot.add(holder);
+    // sombra suave
+    const sh=new T.Mesh(new T.CircleGeometry(95,48),new T.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.08}));sh.rotation.x=-Math.PI/2;sh.position.y=-10.5;pivot.add(sh);
+  }).catch(()=>{document.getElementById('heroLoading').textContent='No se pudo cargar el modelo 3D.'});
+  (function loop(t){
+    if(on){fit(r,cam,hcv);if(!drag&&!RM)rotY+=vel;pivot.rotation.y=rotY;pivot.position.y=RM?0:Math.sin(t/900)*2;r.render(scene,cam)}
+    requestAnimationFrame(loop)})(0);
+}
+
+/* ---------- miniaturas de la colección ---------- */
+const thumbs={};
+function makeThumbs(){
+  const cv=document.createElement('canvas');cv.width=480;cv.height=480;
+  const r=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true,preserveDrawingBuffer:true});r.outputEncoding=T.sRGBEncoding;r.setSize(480,480,false);
+  for(const k of Object.keys(FILES)){
+    const s=new T.Scene();lights(s);const g=geos[k].clone();g.center();
+    const m=new T.Mesh(g,plastic(COL[k]));m.rotation.x=-Math.PI/2;
+    if(k==='aguja'){m.rotation.set(0,0,0);m.rotation.x=-0.9;m.rotation.z=0.7}
+    s.add(m);g.computeBoundingSphere();const R=g.boundingSphere.radius;
+    const cam=new T.PerspectiveCamera(30,1,1,2000);cam.position.set(R*2.2,R*1.6,R*2.6);cam.lookAt(0,0,0);
+    r.render(s,cam);thumbs[k]=cv.toDataURL('image/png');
+  }
+  r.dispose();
+}
+
+/* ---------- colección ---------- */
+const PIECES=[
+  {k:'cuerpo',name:'Cuerpo',dims:'68 × 104 × 68 mm',step:1},
+  {k:'tapa',name:'Tapa',dims:'66 × 59 × 11 mm',step:6},
+  {k:'aguja',name:'Aguja',dims:'14 × 65 × 2 mm',step:7},
+  {k:'visor',name:'Visor',dims:'83 × 42 × 25 mm',step:8},
+];
+const coll=document.getElementById('collection');
+coll.innerHTML=PIECES.map(p=>`<button class="piece" data-step="${p.step}"><span class="ph"><img alt="Pieza ${p.name} de Teo" data-k="${p.k}"></span><b>${p.name}</b><small>${p.dims}</small></button>`).join('');
+
+/* ---------- GUÍA ---------- */
+const gcv=document.getElementById('guide3d');
+const r=makeRenderer(gcv),scene=new T.Scene(),cam=new T.PerspectiveCamera(32,1,1,3000);lights(scene);
+const ctl=new T.OrbitControls(cam,gcv);ctl.enableDamping=true;ctl.enablePan=false;ctl.minDistance=140;ctl.maxDistance=520;
+const root=teoGroup();scene.add(root);
+const floor=new T.Mesh(new T.CircleGeometry(170,64),new T.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.05}));floor.rotation.x=-Math.PI/2;floor.position.y=-0.6;scene.add(floor);
+
+// electrónica simplificada (cajas y cilindros) en el marco del diseño
+function box(w,d,h,c){const m=new T.Mesh(new T.BoxGeometry(w,d,h),plastic(c,{roughness:.5}));return m}
+function cyl(r,len,c,axis){const g=new T.CylinderGeometry(r,r,len,32);const m=new T.Mesh(g,plastic(c,{roughness:.4,metalness:.2}));if(axis==='y'){}else if(axis==='x'){m.rotation.z=Math.PI/2}else{m.rotation.x=Math.PI/2}return m}
+function hcsr04(){const g=new T.Group();const b=box(45,1.6,20,'#2D6CB5');g.add(b);[-13,13].forEach(x=>{const c=cyl(8,12,'#C9D3D8','y');c.position.set(x,-6.5,0);g.add(c)});return g}
+function laser(){const g=new T.Group();const b=box(18,1.6,15,'#1F1F1F');b.position.y=6;g.add(b);const c=cyl(3.2,9,'#B8BEC2','y');c.position.set(0,0,0);g.add(c);const d=cyl(1.4,1,'#E5302A','y');d.position.y=-4.6;g.add(d);return g}
+function nano(){const g=new T.Group();g.add(box(18,45,1.6,'#1F6E8C'));const chip=box(7,7,1.4,'#111');chip.position.z=1.4;g.add(chip);const u=box(8,6,3,'#B8BEC2');u.position.set(0,22,2);g.add(u);return g}
+function powerbank(){return box(44,88,24,'#3A4547')}
+function speaker(){const g=new T.Group();const c=cyl(14,5,'#222','x');g.add(c);const m=cyl(6,2,'#9AA2A6','x');m.position.x=-3;g.add(m);return g}
+function buttons(){const g=new T.Group();[-18,0,18].forEach(x=>{const b=box(12,12,4,'#222');b.rotation.x=Math.PI/2;b.position.set(x,0,0);g.add(b);const c=cyl(3.5,8,'#EE7D22','y');c.position.set(x,4,0);g.add(c)});return g}
+function oled(){const g=new T.Group();const b=box(27,1.6,27,'#1A2A6C');g.add(b);const s=box(24,1,13,'#04080A');s.position.set(0,-1.2,3);g.add(s);return g}
+
+// tamaños del cuerpo del diseño: x ±34, y −52…52, z 0…68
+const PARTS={
+  cuerpo:{make:()=>new T.Mesh(geos.cuerpo,plastic(COL.cuerpo)),p:V(0,0,0),from:V(0,0,0),shell:true},
+  hc:{make:hcsr04,p:V(0,-43,47),from:V(0,-43,150)},
+  laser:{make:laser,p:V(0,-48,16),from:V(0,-48,150)},
+  power:{make:powerbank,p:V(0,4,14),from:V(0,4,170)},
+  nano:{make:nano,p:V(0,10,36),from:V(0,10,170)},
+  speaker:{make:speaker,p:V(30,0,36),from:V(30,0,170)},
+  btns:{make:buttons,p:V(0,47,12),from:V(0,110,12)},
+  tapa:{make:()=>new T.Mesh(geos.tapa,plastic(COL.tapa)),p:FINAL.tapa.p,from:V(0,22,140)},
+  aguja:{make:()=>new T.Mesh(geos.aguja,plastic(COL.aguja)),p:FINAL.aguja.p,q:AGUJA_Q,from:V(-110,-17,35)},
+  visor:{make:()=>new T.Mesh(geos.visor,plastic(COL.visor)),p:FINAL.visor.p,from:V(0,0,150)},
+};
+// disposición del paso 0 (piezas sueltas sobre la mesa)
+const LAYOUT={cuerpo:{p:V(0,0,0)},tapa:{p:V(-100,-10,0)},visor:{p:V(110,-5,0)},aguja:{p:V(0,-95,0),q:new T.Quaternion()}};
+
+const ST=[
+ {t:'Imprime las piezas',part:'Antes de empezar',add:[],needs:[['cuerpo',1],['tapa',1],['aguja',1],['visor',1]],
+  text:'Imprime las cuatro piezas en PLA o PETG. Caben en una cama de 19 × 19 cm en dos tandas.',tip:'Imprime primero solo los encajes a 0,28 mm de capa para probar que todo calza antes de la versión final.',cam:[170,-230,190],look:[0,-10,10]},
+ {t:'Los oídos',part:'HC-SR04 · sensor ultrasónico',add:['hc'],needs:[['cuerpo',1],['#2D6CB5','HC-SR04',1]],
+  text:'Mete el sensor por dentro del cuerpo y saca sus dos cilindros por los dos ojos del frente. Así Teo escucha el eco para medir la distancia.',tip:'Los cilindros deben quedar al ras del frente, sin hundirse.',cam:[120,-200,120],look:[0,0,35],xray:true},
+ {t:'El dedo',part:'Láser KY-008',add:['laser'],needs:[['#1F1F1F','Láser KY-008',1]],
+  text:'Ubica el láser detrás de la ventanita del frente, bajo los ojos. Es el punto rojo con el que apuntas a la punta del objeto.',tip:'Nunca mires directo al láser ni lo apuntes a los ojos de nadie.',cam:[90,-200,60],look:[0,-20,25],xray:true},
+ {t:'Energía y cerebro',part:'Power bank y Arduino Nano',add:['power','nano'],needs:[['#3A4547','Power bank',1],['#1F6E8C','Arduino Nano',1]],
+  text:'Acuesta el power bank en el fondo y pon el Arduino encima. Conecta los módulos con cables dupont: nada se suelda.',tip:'Saca el cable de 5 V directo del power bank, no del pin 5V del Nano.',cam:[160,140,190],look:[0,0,30],xray:true},
+ {t:'La voz',part:'DFPlayer Mini y altavoz',add:['speaker'],needs:[['#222','Altavoz 8 Ω',1]],
+  text:'Pega el altavoz por dentro, justo detrás de la rejilla del costado. Por ahí Teo te habla.',tip:'Graba las frases con el celular y nómbralas 0001.mp3, 0002.mp3…',cam:[220,-60,90],look:[0,0,35],xray:true},
+ {t:'Las manos',part:'Tres pulsadores',add:['btns'],needs:[['#EE7D22','Pulsador',3]],
+  text:'Pasa los tres pulsadores por los agujeros de atrás: INICIAR, SELECCIONAR y ATRÁS, de izquierda a derecha.',tip:'Usan INPUT_PULLUP, así que no necesitan resistencias.',cam:[110,230,90],look:[0,20,20]},
+ {t:'Cierra con la tapa',part:'Tapa',add:['tapa'],needs:[['tapa',1]],
+  text:'Pon la tapa sobre la abertura de arriba y presiónala hasta que encaje. No lleva tornillos.',tip:'Antes de cerrar, enciende a Teo y revisa que los ojitos se animen.',cam:[150,170,170],look:[0,10,40]},
+ {t:'La aguja',part:'Transportador del costado',add:['aguja'],needs:[['aguja',1]],
+  text:'Coloca la aguja en el eje del costado, sobre el transportador grabado. Cuando inclinas a Teo, la aguja cae y marca el ángulo.',tip:'Revisa que la aguja gire libre y marque 0° con Teo apoyado en una mesa plana.',cam:[-230,-60,80],look:[0,-10,40]},
+ {t:'El visor',part:'Visor',add:['visor'],needs:[['visor',1]],
+  text:'Encaja el visor arriba. Te ayuda a alinear a Teo con la punta del objeto antes de leer el ángulo.',tip:'Mira por el visor con un solo ojo, como un topógrafo.',cam:[170,-200,200],look:[0,0,50]},
+ {t:'¡Teo está listo!',part:'Primer ejercicio',add:[],needs:[],
+  text:'Enciéndelo, escucha el saludo y mide tu primera altura. Empieza con una puerta: mide unos 2,10 m.',tip:'Mide siempre a la base del objeto, sobre suelo plano y entre 0,5 y 3 m.',cam:[180,-210,150],look:[0,0,35],spin:true},
+];
+// en qué paso aparece cada pieza
+const INTRO={cuerpo:0,tapa:0,visor:0,aguja:0};
+ST.forEach((s,i)=>s.add.forEach(k=>{if(!(k in INTRO))INTRO[k]=i}));
+// pasos en que las impresas se arman: tapa 6, aguja 7, visor 8
+const ASM={tapa:6,aguja:7,visor:8};
+
+let step=0,meshes={},anim=null,xray=false,spinT=0;
+const $=id=>document.getElementById(id);
+const dots=$('gDots');dots.innerHTML=ST.map((s,i)=>`<button role="tab" aria-label="Paso ${i+1}: ${s.t}" aria-selected="${i===0}"></button>`).join('');
+dots.querySelectorAll('button').forEach((b,i)=>b.onclick=()=>go(i));
+$('gPrev').onclick=()=>go(step-1);$('gNext').onclick=()=>go(step+1);
+$('gXray').onclick=()=>{xray=!xray;$('gXray').setAttribute('aria-pressed',xray);applyXray()};
+coll.querySelectorAll('.piece').forEach(b=>b.onclick=()=>{go(+b.dataset.step);document.getElementById('arma').scrollIntoView({behavior:RM?'auto':'smooth'})});
+
+function applyXray(){const m=meshes.cuerpo;if(!m)return;m.material.transparent=xray;m.material.opacity=xray?.28:1;m.material.depthWrite=!xray;m.material.needsUpdate=true}
+function needsHTML(s){return s.needs.length?s.needs.map(n=>n[0].startsWith('#')?`<span class="need"><i style="background:${n[0]}"></i>${n[1]}<em>×${n[2]}</em></span>`:`<span class="need"><img alt="" src="${thumbs[n[0]]||''}">${n[0][0].toUpperCase()+n[0].slice(1)}<em>×${n[1]}</em></span>`).join(''):'<span class="need">Listo para medir</span>'}
+
+function place(k,stepIdx){
+  const m=meshes[k],P=PARTS[k];
+  const shownAt=(k in ASM)?0:INTRO[k];
+  m.visible=stepIdx>=shownAt;
+  if(!m.visible)return null;
+  if(k in ASM&&stepIdx<ASM[k]){ // pieza suelta sobre la mesa al lado
+    const L=LAYOUT[k];m.position.copy(L.p);m.quaternion.copy(L.q||new T.Quaternion());
+    if(stepIdx===0)return null;
+    // durante el armado se guardan a un costado
+    m.visible=false;return null;
+  }
+  m.quaternion.copy(P.q||new T.Quaternion());
+  const isNew=(k in ASM)?ASM[k]===stepIdx:INTRO[k]===stepIdx&&stepIdx>0;
+  if(isNew){m.position.copy(P.from);return k}
+  m.position.copy(P.p);return null;
+}
+
+function go(i){
+  if(i<0||i>=ST.length)return;step=i;const s=ST[i];
+  $('gNum').textContent=i+1;$('gTitle').textContent=s.t;$('gPart').textContent=s.part;$('gText').textContent=s.text;$('gTip').textContent=s.tip;
+  $('gNeeds').innerHTML=needsHTML(s);
+  $('gPrev').disabled=i===0;$('gNext').disabled=i===ST.length-1;
+  dots.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-selected',j===i));
+  if(!meshes.cuerpo)return;
+  xray=!!s.xray;$('gXray').setAttribute('aria-pressed',xray);applyXray();
+  if(i===0){meshes.cuerpo.position.copy(LAYOUT.cuerpo.p)}
+  const moving=[];Object.keys(PARTS).forEach(k=>{const r=place(k,i);if(r)moving.push(r)});
+  anim={t0:performance.now(),keys:moving};
+  camTo={pos:W(...s.cam),look:W(...s.look)};
+}
+let camTo=null;
+
+visible(gcv,v=>gOn=v);let gOn=false;
+ready.then(()=>{
+  makeThumbs();
+  coll.querySelectorAll('img[data-k]').forEach(im=>im.src=thumbs[im.dataset.k]);
+  Object.entries(PARTS).forEach(([k,P])=>{const m=P.make();meshes[k]=m;root.add(m)});meshes.cuerpo.add(brandMesh());
+  $('guideLoading').hidden=true;
+  cam.position.copy(W(...ST[0].cam));ctl.target.copy(W(...ST[0].look));
+  go(0);
+}).catch(()=>{$('guideLoading').textContent='No se pudieron cargar las piezas.';go(0)});
+
+const ease=t=>1-Math.pow(1-t,3);
+(function loop(now){
+  if(gOn){
+    fit(r,cam,gcv);
+    if(anim){const p=RM?1:Math.min(1,(now-anim.t0-250)/1100);const e=ease(Math.max(0,p));
+      anim.keys.forEach(k=>{const P=PARTS[k];meshes[k].position.lerpVectors(P.from,P.p,e)});if(p>=1)anim=null}
+    if(camTo){cam.position.lerp(camTo.pos,RM?1:.06);ctl.target.lerp(camTo.look,RM?1:.06);if(cam.position.distanceTo(camTo.pos)<1)camTo=null}
+    if(ST[step].spin&&!RM&&!camTo){root.parent.rotation.y+=0.004}else if(!ST[step].spin){root.parent.rotation.y=0}
+    ctl.update();r.render(scene,cam);
+  }
+  requestAnimationFrame(loop)})(0);
+// el giro de celebración necesita un contenedor propio
+const spinner=new T.Group();scene.remove(root);spinner.add(root);scene.add(spinner);
+gcv.addEventListener('pointerdown',()=>{camTo=null});
+})();
+
+</script>
+
+</body>
+</html>
