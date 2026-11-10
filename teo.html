@@ -401,6 +401,20 @@ footer{margin-top:48px;padding-block:28px 40px;border-top:1px solid var(--line);
 .emaplay .chip[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff}
 @media (max-width:980px){.emacard{grid-template-columns:1fr}.emaplay{border-left:0;border-top:1px solid var(--line)}}
 @media (max-width:600px){.emastats{grid-template-columns:1fr}.frow{grid-template-columns:1fr 80px}.frow .fok{grid-column:1/-1;justify-self:end}}
+
+.emamods{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.emamod{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--surface);display:flex;flex-direction:column;gap:10px;min-width:0}
+.emamod h4{margin:0;font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.1}
+.emamod p{margin:0;font-size:13px;color:var(--muted)}
+.emamod p b{color:var(--ink)}
+.emamod dl{margin:auto 0 0;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:4px}
+.emamod dl div{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.emamod dt{color:var(--muted)}.emamod dd{margin:0;font-weight:600;text-align:right}
+.emtag{justify-self:start;align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:999px;color:#fff}
+.emtag.soil{background:#8A5A36}.emtag.water{background:#2C7AD0}.emtag.base{background:#2F8A55}
+.emanote{margin:14px 0 0;font-size:12.5px;color:var(--muted);border-left:3px solid #2F8A55;padding-left:12px;max-width:90ch}
+.emanote b{color:var(--ink)}
+@media (max-width:980px){.emamods{grid-template-columns:1fr}}
 </style>
 
 <nav class="rail" id="rail" aria-label="Ir a una sección">
@@ -732,6 +746,30 @@ footer{margin-top:48px;padding-block:28px 40px;border-top:1px solid var(--line);
       <span class="emasrc">Rangos de referencia aproximados, solo para la demostración.</span>
     </div>
   </div>
+  <div class="emamods">
+    <article class="emamod">
+      <span class="emtag soil">Módulo de suelo</span>
+      <h4>pH de la tierra, lote por lote</h4>
+      <p><b>Qué hace:</b> mide pH y temperatura de una muestra preparada con el protocolo de la norma técnica, y la compara con el rango del cultivo.</p>
+      <p><b>Por qué:</b> en Cauca y Nariño se cultiva café, papa y cacao con lluvias que lavan el suelo y lo vuelven ácido. Cerca del 80 % de los suelos del país son ácidos. Seguir el pH en el tiempo es lo que más le sirve al agricultor.</p>
+      <dl><div><dt>Cauca</dt><dd>2.638 estudiantes de 11.° agropecuario</dd></div><div><dt>Nariño</dt><dd>1.473 estudiantes de 11.° agropecuario</dd></div></dl>
+    </article>
+    <article class="emamod">
+      <span class="emtag water">Módulo de agua de riego</span>
+      <h4>¿Esta agua le sirve al cultivo?</h4>
+      <p><b>Qué hace:</b> mide conductividad (cuántas sales trae), pH y temperatura del agua del tanque, el pozo o la garrafa, y cuánta agua queda.</p>
+      <p><b>Por qué:</b> Meta, Magdalena, Bolívar y Sucre son donde más se riega en Colombia. Ahí el agua salada o con mal pH daña el cultivo sin que se note a simple vista.</p>
+      <dl><div><dt>Bolívar</dt><dd>69 % de fincas con riego</dd></div><div><dt>Magdalena</dt><dd>63,8 % de fincas con riego</dd></div></dl>
+    </article>
+    <article class="emamod">
+      <span class="emtag base">Base de EMA</span>
+      <h4>Se queda en el colegio y recuerda</h4>
+      <p><b>Qué hace:</b> la pantalla da un semáforo según el cultivo y guarda cada dato con fecha y lote, sin internet. El estudiante se lleva el resultado en su cuaderno de finca.</p>
+      <p><b>Por qué:</b> semestre a semestre el colegio arma el mapa del suelo y el agua de su vereda. Y como es modular, un colegio que solo necesita agua no compra lo de suelo.</p>
+      <dl><div><dt>Piloto</dt><dd>374 sedes y 9.119 estudiantes de 11.° en 6 regiones</dd></div></dl>
+    </article>
+  </div>
+  <p class="emanote"><b>Lo que EMA no hace:</b> no reemplaza un laboratorio. No mide bacterias, metales ni nutrientes (NPK). Sirve de alerta y seguimiento, y para saber cuándo vale la pena mandar una muestra a analizar.</p>
 </section>
 
 <footer>
