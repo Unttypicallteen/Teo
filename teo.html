@@ -458,8 +458,8 @@ footer{margin-top:48px;padding-block:28px 40px;border-top:1px solid var(--line);
     <canvas id="hero3d" aria-label="Modelo 3D real de Teo. Arrastra para girarlo." role="img"></canvas>
     <div class="loading" id="heroLoading">Cargando el modelo 3D…</div>
     <div class="glass g1"><span>Oídos · HC-SR04</span><b class="mono">d = 2,50 m</b><svg viewBox="0 0 80 18" aria-hidden="true"><path d="M2 9 q 6 -8 12 0 t 12 0 t 12 0 t 12 0 t 12 0 t 12 0" fill="none" stroke="var(--orange)" stroke-width="1.6"/></svg></div>
-    <div class="glass g2"><span>Ángulo</span><b class="mono">θ = 38°</b></div>
-    <div class="glass g3"><span>Altura calculada</span><b class="mono">h = 2,25 m</b></div>
+    <div class="glass g2"><span>Ángulo</span><b class="mono">θ = 30°</b></div>
+    <div class="glass g3"><span>Altura calculada</span><b class="mono">h = 1,74 m</b></div>
     <div class="facecard">
       <div class="device"><canvas id="heroFace" aria-label="Cara animada de Teo" role="img"></canvas>
         <div class="cheeks" id="heroCheeks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></div>
@@ -649,7 +649,7 @@ footer{margin-top:48px;padding-block:28px 40px;border-top:1px solid var(--line);
 <section id="simulador">
   <div class="head">
     <div><span class="eyebrow">Simulador</span><h2>Prueba a Teo antes de tenerlo en la mano</h2></div>
-    <p><strong>Teo explica</strong>: ves cómo sale la altura paso a paso. <strong>Hazlo tú</strong>: como en el campo, inclinas a Teo, lees la aguja del transportador y llenas tu cuaderno; Teo revisa cada línea. <strong>Teo te reta</strong>: él mide y tú calculas.</p>
+    <p><strong>Teo explica</strong>: ves cómo sale la altura paso a paso. <strong>Hazlo tú</strong>: como en el campo, subes el visor, lees la aguja del transportador y llenas tu cuaderno; Teo revisa cada línea. <strong>Teo te reta</strong>: él mide y tú calculas.</p>
   </div>
 
   <div class="sim">
@@ -679,7 +679,7 @@ footer{margin-top:48px;padding-block:28px 40px;border-top:1px solid var(--line);
         <div id="expCtl" style="display:grid;gap:14px">
           <div class="ctl"><label for="dist">Distancia a la base <output id="distOut">2,50 m</output></label><input type="range" id="dist" min="0.5" max="3" step="0.1" value="2.5"></div>
           <div class="ctl"><label for="ang">Inclinación del brazo <output id="angOut">0°</output></label>
-            <div class="row"><button class="nudge" id="angDn" aria-label="Bajar medio grado">−</button><input type="range" id="ang" min="0" max="75" step="0.5" value="0"><button class="nudge" id="angUp" aria-label="Subir medio grado">+</button></div></div>
+            <div class="row"><button class="nudge" id="angDn" aria-label="Bajar medio grado">−</button><input type="range" id="ang" min="0" max="85" step="0.5" value="0"><button class="nudge" id="angUp" aria-label="Subir medio grado">+</button></div></div>
           <div class="hw">
             <button class="hwb go" id="bStart"><i></i>INICIAR</button>
             <button class="hwb" id="bSel"><i></i>SELECCIONAR</button>
@@ -862,14 +862,14 @@ new Face(document.getElementById('rootFace')).mood='neutral';
 /* ===================== Anatomía ===================== */
 const PARTS=[
  ['cerebro','Cerebro','Arduino Nano','Lee el sensor, mueve el servo y decide qué decir. Funciona a 5 V.','5V · GND'],
- ['cara','Cara','Pantalla OLED 0,96"','Los ojitos reaccionan a cada paso: atentos, felices o «inténtalo otra vez».','A4 · A5 · I2C'],
+ ['cara','Cara','Pantalla de atrás','Los ojitos y los mensajes de Teo: atentos, felices o «inténtalo otra vez».','A4 · A5 · I2C'],
  ['oidos','Oídos','Sensor ultrasónico HC-SR04','Mide la distancia con ecos de ultrasonido, como un murciélago. Teo trabaja entre 0,5 y 3 m.','D7 · D8'],
- ['cuello','Cuello','Servomotor SG90','Levanta el brazo. Su posición es el ángulo de elevación θ.','D9 · PWM'],
- ['dedo','Dedo','Láser KY-008','Señala la punta del objeto. Solo apunta, no mide. Nunca a los ojos.','D10'],
+ ['cuello','Cuello','Visor con bisagra','Gira a mano de 0° a 85°. La aguja del costado marca el ángulo θ.','Sin motor'],
+ ['dedo','Dedo','Láser KY-008','Va en la punta del visor y señala la punta del objeto. Nunca a los ojos.','D10'],
  ['mejillas','Mejillas','Tira LED WS2812B','Azul: estoy esperando. Verde: salió bien. Rojo: intenta otra vez.','D6'],
  ['voz','Voz','DFPlayer Mini y altavoz','Guía pregrabada que da las instrucciones que daría el profesor.','D11 · D12'],
  ['manos','Manos','Tres pulsadores','INICIAR, SELECCIONAR y ATRÁS. Todo el menú cabe en tres botones.','D2 · D3 · D4'],
- ['energia','Energía','Power bank 5.000 mAh','Sin enchufe: el piso de abajo carga con todo Teo.','USB 5 V'],
+ ['energia','Energía','Power bank 5.000 mAh','Sin enchufe: el cable USB entra por la ventanita del frente.','USB 5 V'],
 ];
 const partsEl=document.getElementById('parts'),fig=document.getElementById('figure');
 partsEl.innerHTML=PARTS.map(([id,who,name,desc,pin])=>`<li data-p="${id}"><button type="button"><span class="who">${who}</span><span class="what"><b>${name}</b>${desc}</span><span class="pin">${pin}</span></button></li>`).join('');
@@ -953,12 +953,7 @@ function render(){
   // Teo
   const bw=34,bh=HT*SC;
   s+=`<g><rect x="${tx-4}" y="${GY-bh*0.34}" width="${bw}" height="${bh*0.34}" rx="3" fill="#C9D3D3" stroke="#7C8C8C"/><rect x="${tx-6}" y="${GY-bh*0.95}" width="${bw+4}" height="${bh*0.62}" rx="4" fill="#F4F7F7" stroke="#7C8C8C"/><rect x="${tx}" y="${GY-bh*0.9}" width="16" height="${bh*0.42}" rx="2" fill="#04080A"/><rect x="${tx+3}" y="${GY-bh*0.84}" width="3.5" height="5" rx="1" fill="#C9F6FF"/><rect x="${tx+9.5}" y="${GY-bh*0.84}" width="3.5" height="5" rx="1" fill="#C9F6FF"/></g>`;
-  if(S.mode==='campo'){
-    s=s.replace(/<g><rect x="[^"]*" y="[^"]*" width="34"[\s\S]*?<\/g>$/,'');
-    s+=`<g transform="rotate(${S.th} ${tx} ${py})"><rect x="${tx-30}" y="${py-14}" width="40" height="28" rx="5" fill="#EE7D22" stroke="#B4570C"/><circle cx="${tx-24}" cy="${py-4}" r="4.5" fill="#C9D3D8"/><circle cx="${tx-24}" cy="${py+6}" r="0" fill="none"/><circle cx="${tx-30}" cy="${py}" r="2.5" fill="var(--laser)"/><rect x="${tx-24}" y="${py-22}" width="28" height="8" rx="2" fill="#2B3638"/></g>
-    <line x1="${tx+4}" y1="${py-2}" x2="${tx+4}" y2="${py+16}" stroke="#E5302A" stroke-width="2"/>`;
-  }else{
-  s+=`<g transform="rotate(${S.th} ${tx} ${py})"><rect x="${tx-30}" y="${py-5}" width="36" height="10" rx="3" fill="#2D6CB5"/><circle cx="${tx-30}" cy="${py}" r="2.5" fill="var(--laser)"/></g><circle cx="${tx}" cy="${py}" r="3.5" fill="#2C7AD0"/>`;}
+  s+=`<g transform="rotate(${S.th} ${tx} ${py})"><rect x="${tx-30}" y="${py-5}" width="36" height="10" rx="3" fill="#C8642A"/><circle cx="${tx-30}" cy="${py}" r="2.5" fill="var(--laser)"/></g><circle cx="${tx}" cy="${py}" r="3.5" fill="#1C1C1C"/>`;
   // alturas
   const showH=(S.mode==='exp'&&S.anim>=5)||(S.mode==='campo'&&S.done)||(S.mode==='ret'&&(S.checked==='ok'||S.anim>=5));
   s+=`<text x="${OX-(o.id==='puerta'?0.45*SC:28)}" y="${top-12}" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">${showH?fmt(o.H)+' m':'h = ?'}</text>`;
@@ -985,7 +980,7 @@ function playProcess(){
   const err=Math.abs(h-o.H)/o.H*100;
   const lines=[
    `<span class="l">1 · d = ${fmt(S.d)} m <em>← lo midió el ultrasonido</em></span>`,
-   `<span class="l">2 · θ = ${fmt(S.th,1)}° <em>← posición del servo</em></span>`,
+   `<span class="l">2 · θ = ${fmt(S.th,1)}° <em>← lo marca la aguja</em></span>`,
    `<span class="l">3 · d · tan θ = ${fmt(S.d)} × ${fmt(tan,3)} = ${fmt(opp)} m</span>`,
    `<span class="l">4 · h = ${fmt(HT)} + ${fmt(opp)} <em>← sumo mi altura</em></span>`,
    `<span class="l tot">h = ${fmt(h)} m <em style="font-weight:400">· real ${fmt(o.H)} m · error ${fmt(err,1)} %</em></span>`];
@@ -998,25 +993,25 @@ function playProcess(){
 }
 
 /* --- modo explica --- */
-function resetExp(){stopAnim();S.done=false;closeFicha();$('ang').previousElementSibling;document.querySelector('label[for=ang]').firstChild.textContent=S.mode==='campo'?'Inclinación de Teo ':'Inclinación del brazo ';S.step=0;S.th=0;S.anim=0;S.sonar=-1;$('ang').value=0;$('proc').hidden=true;mood('neutral','');talk('Ponme frente a la base del objeto, elige la distancia y pulsa INICIAR.');markObj();render()}
+function resetExp(){stopAnim();S.done=false;closeFicha();$('ang').previousElementSibling;document.querySelector('label[for=ang]').firstChild.textContent=S.mode==='campo'?'Ángulo del visor ':'Ángulo del visor ';S.step=0;S.th=0;S.anim=0;S.sonar=-1;$('ang').value=0;$('proc').hidden=true;mood('neutral','');talk('Ponme frente a la base del objeto, elige la distancia y pulsa INICIAR.');markObj();render()}
 $('dist').addEventListener('input',e=>{S.d=+e.target.value;render()});
-function setAng(v){S.th=Math.max(0,Math.min(75,v));$('ang').value=S.th;
+function setAng(v){S.th=Math.max(0,Math.min(85,v));$('ang').value=S.th;
   const e=hitH()-OBJS[S.obj].H;mood('focus','');
-  if(Math.abs(e)/OBJS[S.obj].H<=0.05)talk('¡Ahí está la punta! Pulsa SELECCIONAR.');else talk(e<0?(S.mode==='campo'?'Inclíname un poco más…':'Sube un poco más el brazo…'):'Te pasaste: el láser va por encima de la punta.');
+  if(Math.abs(e)/OBJS[S.obj].H<=0.05)talk('¡Ahí está la punta! Pulsa SELECCIONAR.');else talk(e<0?'Sube un poco más el visor…':'Te pasaste: el láser va por encima de la punta.');
   render()}
 $('ang').addEventListener('input',e=>setAng(+e.target.value));
 $('angUp').onclick=()=>setAng(S.th+0.5);$('angDn').onclick=()=>setAng(S.th-0.5);
 $('bStart').onclick=()=>{
   talk('Escuchando el eco…');mood('focus','');
   const t0=performance.now(),dur=RM?100:1300;S.sonar=0;
-  const tick=now=>{const p=(now-t0)/dur;if(p<1){S.sonar=(p*2.5)%1;render();requestAnimationFrame(tick)}else{S.sonar=-1;S.step=1;mood('happy','ok');talk(`Medí ${fmt(S.d)} m hasta la base. Ahora sube mi brazo hasta que el láser toque la punta.`);render()}};
+  const tick=now=>{const p=(now-t0)/dur;if(p<1){S.sonar=(p*2.5)%1;render();requestAnimationFrame(tick)}else{S.sonar=-1;S.step=1;mood('happy','ok');talk(`Medí ${fmt(S.d)} m hasta la base. Ahora sube mi visor hasta que el láser toque la punta.`);render()}};
   requestAnimationFrame(tick);
 };
 $('bSel').onclick=()=>{
   const o=OBJS[S.obj],e=hitH()-o.H;
   if(Math.abs(e)/o.H<=0.05&&S.mode==='campo'){S.step=2;mood('happy','ok');talk('¡Quieto ahí! Ahora lee el ángulo en la aguja del transportador y escríbelo en tu cuaderno.');openFicha();render();return}
   if(Math.abs(e)/o.H<=0.05){S.step=2;mood('happy','ok');talk(`Fijé θ = ${fmt(S.th,1)}°. Mira cómo sale la altura.`);render();playProcess()}
-  else{mood('sad','bad');talk(`El punto quedó ${fmt(Math.abs(e)*100,0)} cm ${e<0?'por debajo':'por encima'} de la punta. Ajusta el brazo e inténtalo otra vez.`)}
+  else{mood('sad','bad');talk(`El punto quedó ${fmt(Math.abs(e)*100,0)} cm ${e<0?'por debajo':'por encima'} de la punta. Ajusta el visor e inténtalo otra vez.`)}
 };
 $('bBack').onclick=resetExp;
 
@@ -1052,14 +1047,14 @@ $('bReveal').onclick=()=>playProcess();$('bNew').onclick=newChallenge;
 
 /* --- modo hazlo tú: transportador + cuaderno --- */
 function drawGauge(){
-  const cx=70,cy=14,R=124;let s=`<path d="M${cx} ${cy} L${cx} ${cy+R} A ${R} ${R} 0 0 0 ${cx+R} ${cy} Z" fill="var(--sky-2)" stroke="var(--line)"/>`;
-  // 0° abajo (aguja colgando), crece hacia la derecha; vista del costado
-  for(let a=0;a<=90;a++){const r=rad(a),x1=cx+Math.sin(r)*R,y1=cy+Math.cos(r)*R,L=a%10===0?14:a%5===0?9:5;const x2=cx+Math.sin(r)*(R-L),y2=cy+Math.cos(r)*(R-L);
+  // como en la carcasa: pivote a la derecha, 0° horizontal a la izquierda, 90° hacia abajo
+  const cx=225,cy=14,R=128;let s=`<path d="M${cx} ${cy} L${cx-R} ${cy} A ${R} ${R} 0 0 0 ${cx} ${cy+R} Z" fill="var(--sky-2)" stroke="var(--line)"/>`;
+  const P=(a,r)=>[cx-Math.cos(rad(a))*r,cy+Math.sin(rad(a))*r];
+  for(let a=0;a<=90;a++){const L=a%10===0?14:a%5===0?9:5;const [x1,y1]=P(a,R),[x2,y2]=P(a,R-L);
     s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--ink)" stroke-width="${a%10===0?1.4:.7}"/>`;
-    if(a%10===0){const xt=cx+Math.sin(r)*(R-26),yt=cy+Math.cos(r)*(R-26)+4;s+=`<text x="${xt}" y="${yt}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)">${a}</text>`}}
-  for(let a=-10;a<0;a++){}
-  const r=rad(S.step>=1?S.th:0),nx=cx+Math.sin(r)*(R-4),ny=cy+Math.cos(r)*(R-4);
-  s+=`<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="var(--laser)" stroke-width="2.4" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="var(--laser)"/><circle cx="${cx}" cy="${cy}" r="2" fill="var(--surface)"/>`;
+    if(a%10===0){const [xt,yt]=P(a,R-26);s+=`<text x="${xt}" y="${yt+4}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--muted)">${a}</text>`}}
+  const [nx,ny]=P(S.step>=1?S.th:0,R-4);
+  s+=`<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#1C1C1C" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="7" fill="#C8642A"/><circle cx="${cx}" cy="${cy}" r="2.2" fill="var(--surface)"/>`;
   $('gaugeSvg').innerHTML=s;
 }
 let fStage=0;
@@ -1070,7 +1065,7 @@ const num=id=>{const v=parseFloat($(id).value.trim().replace(',','.'));return is
 function fCheck(i){
   const v=num('f'+i);if(v===null){talk('Escribe un número en esa línea del cuaderno.');return}
   const th=num('f0'),tn=num('f1'),op=num('f2');let ok=false,msg='';
-  if(i===0){ok=Math.abs(v-S.th)<=1;msg=ok?`Bien leído: ${fmt(v,0)}°. Ahora saca la tangente.`:(Math.abs(v-(90-S.th))<=1?'Leíste el complemento. El 0 está abajo, donde cuelga la aguja sin inclinar.':'Mira otra vez la aguja: las rayitas largas van de 10 en 10 y las medianas de 5 en 5.')}
+  if(i===0){ok=Math.abs(v-S.th)<=1;msg=ok?`Bien leído: ${fmt(v,0)}°. Ahora saca la tangente.`:(Math.abs(v-(90-S.th))<=1?'Leíste el complemento. El 0 está donde marca la aguja con el visor horizontal.':'Mira otra vez la aguja: las rayitas largas van de 10 en 10 y las medianas de 5 en 5.')}
   if(i===1){const c=Math.tan(rad(th));ok=Math.abs(v-c)/c<=0.02;
     msg=ok?'Perfecto. Multiplica la distancia por esa tangente.':Math.abs(v-Math.sin(rad(th)))<0.01?'Ese es el seno. Necesitas la tangente: opuesto sobre adyacente.':Math.abs(v-Math.cos(rad(th)))<0.01?'Ese es el coseno. Usa la tangente.':Math.abs(v-Math.tan(th))<0.02?'Tu calculadora está en radianes. Ponla en grados (DEG).':`Revisa: tan ${fmt(th,0)}° en la calculadora.`}
   if(i===2){const c=S.d*tn;ok=Math.abs(v-c)/c<=0.03;msg=ok?'Eso es el cateto opuesto. ¿Falta algo para la altura?':Math.abs(v-S.d/tn)/(S.d/tn)<0.03?'Dividiste. Es d por la tangente.':`Multiplica ${fmt(S.d)} × ${fmt(tn,3)}.`}
@@ -1133,7 +1128,7 @@ const V=(x,y,z)=>new T.Vector3(x,y,z);
 const W=(x,y,z)=>V(x,z,-y);
 const FILES={cuerpo:'models/teo_cuerpo.stl.txt',tapa:'models/teo_tapa.stl.txt',visor:'models/teo_visor.stl.txt',aguja:'models/teo_aguja.stl.txt'};
 const b64=s=>{const bin=atob(s.trim());const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer};
-const COL={cuerpo:'#EE7D22',tapa:'#F1E7D6',visor:'#2B3638',aguja:'#E5302A'};
+const COL={cuerpo:'#B8B3A8',tapa:'#C6C2B8',visor:'#B0501A',aguja:'#1C1C1C'};
 const loader=new T.STLLoader();
 const geos={};
 const ready=Promise.all(Object.entries(FILES).map(([k,u])=>fetch(u).then(r=>{if(!r.ok)throw new Error(u);return r.text()}).then(s=>{const g=loader.parse(b64(s));g.computeVertexNormals();geos[k]=g})));
@@ -1151,11 +1146,19 @@ function visible(el,cb){const io=new IntersectionObserver(es=>es.forEach(e=>cb(e
 /* piezas en el marco del diseño */
 function teoGroup(){const g=new T.Group();g.rotation.x=-Math.PI/2;return g}
 const AGUJA_Q=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(V(0,1,0),V(0,0,-1),V(-1,0,0)));
+// el visor gira sobre los agujeros de los costados (y=-17, z=60); en la foto está a 30°
+const VIS_ANG=30;
+function pose(p,q){const M=new T.Matrix4().compose(p,q||new T.Quaternion(),V(1,1,1));
+  const P=new T.Matrix4().makeTranslation(0,-17,60).multiply(new T.Matrix4().makeRotationX(-VIS_ANG*Math.PI/180)).multiply(new T.Matrix4().makeTranslation(0,17,-60));
+  const W2=P.multiply(M),pp=V(0,0,0),qq=new T.Quaternion(),ss=V(1,1,1);W2.decompose(pp,qq,ss);return {p:pp,q:qq}}
+const AG_Q=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(V(0,0,1),V(0,1,0),V(-1,0,0)));
+const LZ_Q=new T.Quaternion();
 const FINAL={
   cuerpo:{p:V(0,0,0)},
   tapa:{p:V(0,22,57.5)},
-  visor:{p:V(0,0,68.2)},
-  aguja:{p:V(-35.2,-17,35),q:AGUJA_Q},
+  visor:pose(V(0,-31.75,78.85),new T.Quaternion().setFromAxisAngle(V(0,1,0),Math.PI)),
+  aguja:pose(V(-36.2,8,61.6),AG_Q),
+  laser:pose(V(0,-46,83),LZ_Q),
 };
 
 
@@ -1190,7 +1193,7 @@ if(hcv){
     const g=teoGroup();
     for(const k of ['cuerpo','tapa','visor','aguja']){const m=new T.Mesh(geos[k],plastic(COL[k]));m.position.copy(FINAL[k].p);if(FINAL[k].q)m.quaternion.copy(FINAL[k].q);g.add(m)}
     g.add(brandMesh());
-    for(const k of ['hc','laser','power','nano','speaker','btns']){const P=PARTS[k],m=P.make();m.position.copy(P.p);g.add(m)}
+    for(const k of ['hc','laser','proto','nano','screen','speaker','btns']){const P=PARTS[k],m=P.make();m.position.copy(P.p);if(P.q)m.quaternion.copy(P.q);g.add(m)}
     g.position.set(0,0,0);
     const holder=new T.Group();holder.add(g);holder.position.set(0,0,0);
     // centrar: el cuerpo va de y=-52 a 52 y z de 0 a 68 (más el visor)
@@ -1222,10 +1225,10 @@ function makeThumbs(){
 
 /* ---------- colección ---------- */
 const PIECES=[
-  {k:'cuerpo',name:'Cuerpo',dims:'68 × 104 × 68 mm',step:1},
+  {k:'cuerpo',name:'Cuerpo',dims:'66 × 104 × 68 mm',step:1},
   {k:'tapa',name:'Tapa',dims:'66 × 59 × 11 mm',step:6},
-  {k:'aguja',name:'Aguja',dims:'14 × 65 × 2 mm',step:7},
-  {k:'visor',name:'Visor',dims:'83 × 42 × 25 mm',step:8},
+  {k:'visor',name:'Visor',dims:'83 × 42 × 25 mm',step:7},
+  {k:'aguja',name:'Aguja',dims:'14 × 65 × 2 mm',step:8},
 ];
 const coll=document.getElementById('collection');
 coll.innerHTML=PIECES.map(p=>`<button class="piece" data-step="${p.step}"><span class="ph"><img alt="Pieza ${p.name} de Teo" data-k="${p.k}"></span><b>${p.name}</b><small>${p.dims}</small></button>`).join('');
@@ -1244,53 +1247,56 @@ function hcsr04(){const g=new T.Group();const b=box(45,1.6,20,'#2D6CB5');g.add(b
 function laser(){const g=new T.Group();const b=box(18,1.6,15,'#1F1F1F');b.position.y=6;g.add(b);const c=cyl(3.2,9,'#B8BEC2','y');c.position.set(0,0,0);g.add(c);const d=cyl(1.4,1,'#E5302A','y');d.position.y=-4.6;g.add(d);return g}
 function nano(){const g=new T.Group();g.add(box(18,45,1.6,'#1F6E8C'));const chip=box(7,7,1.4,'#111');chip.position.z=1.4;g.add(chip);const u=box(8,6,3,'#B8BEC2');u.position.set(0,22,2);g.add(u);return g}
 function powerbank(){return box(44,88,24,'#3A4547')}
+function proto(){const g=new T.Group();const b=box(54,82,9,'#F2F2EE');g.add(b);for(let i=-3;i<=3;i++){const s=box(1.4,74,0.6,'#C9C9C2');s.position.set(i*6,0,4.8);g.add(s)}return g}
+function screenBig(){const g=new T.Group();g.add(box(44,2,34,'#1A2A6C'));const s=box(40,1,27,'#04080A');s.position.set(0,1.4,0);g.add(s);return g}
 function speaker(){const g=new T.Group();const c=cyl(14,5,'#222','x');g.add(c);const m=cyl(6,2,'#9AA2A6','x');m.position.x=-3;g.add(m);return g}
-function buttons(){const g=new T.Group();[-18,0,18].forEach(x=>{const b=box(12,12,4,'#222');b.rotation.x=Math.PI/2;b.position.set(x,0,0);g.add(b);const c=cyl(3.5,8,'#EE7D22','y');c.position.set(x,4,0);g.add(c)});return g}
+function buttons(){const g=new T.Group();[-18,0,18].forEach(x=>{const b=box(12,12,4,'#222');b.rotation.x=Math.PI/2;b.position.set(x,0,0);g.add(b);const c=cyl(5.5,8,'#C93A2E','y');c.position.set(x,4,0);g.add(c)});return g}
 function oled(){const g=new T.Group();const b=box(27,1.6,27,'#1A2A6C');g.add(b);const s=box(24,1,13,'#04080A');s.position.set(0,-1.2,3);g.add(s);return g}
 
 // tamaños del cuerpo del diseño: x ±34, y −52…52, z 0…68
+const up=(v,d)=>V(v.x,v.y,v.z+d);
 const PARTS={
   cuerpo:{make:()=>new T.Mesh(geos.cuerpo,plastic(COL.cuerpo)),p:V(0,0,0),from:V(0,0,0),shell:true},
   hc:{make:hcsr04,p:V(0,-43,47),from:V(0,-43,150)},
-  laser:{make:laser,p:V(0,-48,16),from:V(0,-48,150)},
-  power:{make:powerbank,p:V(0,4,14),from:V(0,4,170)},
-  nano:{make:nano,p:V(0,10,36),from:V(0,10,170)},
-  speaker:{make:speaker,p:V(30,0,36),from:V(30,0,170)},
+  proto:{make:proto,p:V(0,2,6),from:V(0,2,170)},
+  nano:{make:nano,p:V(0,-6,12),from:V(0,-6,170)},
+  screen:{make:screenBig,p:V(0,49,42),from:V(0,120,42)},
+  speaker:{make:speaker,p:V(30,22,40),from:V(30,22,170)},
   btns:{make:buttons,p:V(0,47,12),from:V(0,110,12)},
   tapa:{make:()=>new T.Mesh(geos.tapa,plastic(COL.tapa)),p:FINAL.tapa.p,from:V(0,22,140)},
-  aguja:{make:()=>new T.Mesh(geos.aguja,plastic(COL.aguja)),p:FINAL.aguja.p,q:AGUJA_Q,from:V(-110,-17,35)},
-  visor:{make:()=>new T.Mesh(geos.visor,plastic(COL.visor)),p:FINAL.visor.p,from:V(0,0,150)},
+  visor:{make:()=>new T.Mesh(geos.visor,plastic(COL.visor)),p:FINAL.visor.p,q:FINAL.visor.q,from:up(FINAL.visor.p,90)},
+  laser:{make:laser,p:FINAL.laser.p,q:FINAL.laser.q,from:up(FINAL.laser.p,120)},
+  aguja:{make:()=>new T.Mesh(geos.aguja,plastic(COL.aguja)),p:FINAL.aguja.p,q:FINAL.aguja.q,from:V(-120,FINAL.aguja.p.y,FINAL.aguja.p.z)},
 };
 // disposición del paso 0 (piezas sueltas sobre la mesa)
 const LAYOUT={cuerpo:{p:V(0,0,0)},tapa:{p:V(-100,-10,0)},visor:{p:V(110,-5,0)},aguja:{p:V(0,-95,0),q:new T.Quaternion()}};
 
 const ST=[
- {t:'Imprime las piezas',part:'Antes de empezar',add:[],needs:[['cuerpo',1],['tapa',1],['aguja',1],['visor',1]],
-  text:'Imprime las cuatro piezas en PLA o PETG. Caben en una cama de 19 × 19 cm en dos tandas.',tip:'Imprime primero solo los encajes a 0,28 mm de capa para probar que todo calza antes de la versión final.',cam:[170,-230,190],look:[0,-10,10]},
+ {t:'Imprime las piezas',part:'Antes de empezar',add:[],needs:[['cuerpo',1],['tapa',1],['visor',1],['aguja',1]],
+  text:'Imprime las cuatro piezas en PLA. Ninguna necesita soportes y caben en una cama de 19 × 19 cm.',tip:'Imprime primero solo los encajes a 0,28 mm de capa para probar que todo calza.',cam:[170,-230,190],look:[0,-10,10]},
  {t:'Los oídos',part:'HC-SR04 · sensor ultrasónico',add:['hc'],needs:[['cuerpo',1],['#2D6CB5','HC-SR04',1]],
-  text:'Mete el sensor por dentro del cuerpo y saca sus dos cilindros por los dos ojos del frente. Así Teo escucha el eco para medir la distancia.',tip:'Los cilindros deben quedar al ras del frente, sin hundirse.',cam:[120,-200,120],look:[0,0,35],xray:true},
- {t:'El dedo',part:'Láser KY-008',add:['laser'],needs:[['#1F1F1F','Láser KY-008',1]],
-  text:'Ubica el láser detrás de la ventanita del frente, bajo los ojos. Es el punto rojo con el que apuntas a la punta del objeto.',tip:'Nunca mires directo al láser ni lo apuntes a los ojos de nadie.',cam:[90,-200,60],look:[0,-20,25],xray:true},
- {t:'Energía y cerebro',part:'Power bank y Arduino Nano',add:['power','nano'],needs:[['#3A4547','Power bank',1],['#1F6E8C','Arduino Nano',1]],
-  text:'Acuesta el power bank en el fondo y pon el Arduino encima. Conecta los módulos con cables dupont: nada se suelda.',tip:'Saca el cable de 5 V directo del power bank, no del pin 5V del Nano.',cam:[160,140,190],look:[0,0,30],xray:true},
- {t:'La voz',part:'DFPlayer Mini y altavoz',add:['speaker'],needs:[['#222','Altavoz 8 Ω',1]],
-  text:'Pega el altavoz por dentro, justo detrás de la rejilla del costado. Por ahí Teo te habla.',tip:'Graba las frases con el celular y nómbralas 0001.mp3, 0002.mp3…',cam:[220,-60,90],look:[0,0,35],xray:true},
- {t:'Las manos',part:'Tres pulsadores',add:['btns'],needs:[['#EE7D22','Pulsador',3]],
-  text:'Pasa los tres pulsadores por los agujeros de atrás: INICIAR, SELECCIONAR y ATRÁS, de izquierda a derecha.',tip:'Usan INPUT_PULLUP, así que no necesitan resistencias.',cam:[110,230,90],look:[0,20,20]},
+  text:'Mete el sensor por dentro y saca sus dos cilindros por los ojos del frente. Así Teo escucha el eco para medir la distancia.',tip:'Los cilindros deben quedar al ras del frente, sin hundirse.',cam:[120,-200,120],look:[0,0,35],xray:true},
+ {t:'El cerebro',part:'Protoboard y Arduino Nano',add:['proto','nano'],needs:[['#F2F2EE','Protoboard',1],['#1F6E8C','Arduino Nano',1]],
+  text:'Pon la protoboard en el piso de la caja y clava el Arduino en ella. Todo se conecta con cables dupont: nada se suelda.',tip:'El cable USB del power bank entra por la ventanita del frente.',cam:[160,140,190],look:[0,0,20],xray:true},
+ {t:'La cara',part:'Pantalla',add:['screen'],needs:[['#04080A','Pantalla',1]],
+  text:'Encaja la pantalla en la ventana grande de atrás. Ahí salen los ojitos, la distancia, el ángulo y los mensajes de Teo.',tip:'Revisa que la pantalla quede derecha antes de apretarla.',cam:[110,230,110],look:[0,20,35]},
+ {t:'Las manos',part:'Tres pulsadores',add:['btns'],needs:[['#C93A2E','Pulsador',3]],
+  text:'Pasa los tres botones rojos por los agujeros de atrás, bajo la pantalla: INICIAR, SELECCIONAR y ATRÁS.',tip:'Usan INPUT_PULLUP, así que no necesitan resistencias.',cam:[110,230,90],look:[0,20,20]},
+ {t:'La voz',part:'DFPlayer Mini y parlante',add:['speaker'],needs:[['#222','Parlante 8 Ω',1]],
+  text:'Pega el parlante por dentro, detrás de la rejilla del costado. Por ahí Teo te habla.',tip:'Graba las frases con el celular y nómbralas 0001.mp3, 0002.mp3…',cam:[220,40,100],look:[0,10,35],xray:true},
  {t:'Cierra con la tapa',part:'Tapa',add:['tapa'],needs:[['tapa',1]],
   text:'Pon la tapa sobre la abertura de arriba y presiónala hasta que encaje. No lleva tornillos.',tip:'Antes de cerrar, enciende a Teo y revisa que los ojitos se animen.',cam:[150,170,170],look:[0,10,40]},
- {t:'La aguja',part:'Transportador del costado',add:['aguja'],needs:[['aguja',1]],
-  text:'Coloca la aguja en el eje del costado, sobre el transportador grabado. Cuando inclinas a Teo, la aguja cae y marca el ángulo.',tip:'Revisa que la aguja gire libre y marque 0° con Teo apoyado en una mesa plana.',cam:[-230,-60,80],look:[0,-10,40]},
- {t:'El visor',part:'Visor',add:['visor'],needs:[['visor',1]],
-  text:'Encaja el visor arriba. Te ayuda a alinear a Teo con la punta del objeto antes de leer el ángulo.',tip:'Mira por el visor con un solo ojo, como un topógrafo.',cam:[170,-200,200],look:[0,0,50]},
+ {t:'El visor y el dedo',part:'Visor con láser',add:['laser'],needs:[['visor',1],['#1F1F1F','Láser KY-008',1]],
+  text:'Monta el láser en la punta del visor y encaja sus dos patas en los agujeros de los costados. El visor gira de 0° a 85° para apuntar a la punta del objeto.',tip:'Nunca mires directo al láser ni lo apuntes a los ojos de nadie.',cam:[170,-210,170],look:[0,-15,55]},
+ {t:'La aguja',part:'Transportador del costado',add:[],needs:[['aguja',1]],
+  text:'Pon la aguja en el eje del costado izquierdo, unida al visor. Cuando subes el visor, la aguja marca el ángulo del láser en el transportador.',tip:'Con el visor horizontal, la aguja debe marcar 0°.',cam:[-240,-30,90],look:[0,-10,45]},
  {t:'¡Teo está listo!',part:'Primer ejercicio',add:[],needs:[],
-  text:'Enciéndelo, escucha el saludo y mide tu primera altura. Empieza con una puerta: mide unos 2,10 m.',tip:'Mide siempre a la base del objeto, sobre suelo plano y entre 0,5 y 3 m.',cam:[180,-210,150],look:[0,0,35],spin:true},
+  text:'Enciéndelo, escucha el saludo y mide tu primera altura. Empieza con una puerta: mide unos 2,10 m.',tip:'Mide siempre a la base del objeto, sobre suelo plano y entre 0,5 y 3 m.',cam:[180,-210,150],look:[0,0,40],spin:true},
 ];
 // en qué paso aparece cada pieza
 const INTRO={cuerpo:0,tapa:0,visor:0,aguja:0};
 ST.forEach((s,i)=>s.add.forEach(k=>{if(!(k in INTRO))INTRO[k]=i}));
-// pasos en que las impresas se arman: tapa 6, aguja 7, visor 8
-const ASM={tapa:6,aguja:7,visor:8};
+const ASM={tapa:6,visor:7,aguja:8};
 
 let step=0,meshes={},anim=null,xray=false,spinT=0;
 const $=id=>document.getElementById(id);
